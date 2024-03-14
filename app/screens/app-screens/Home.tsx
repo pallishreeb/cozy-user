@@ -8,7 +8,7 @@ import {
   StyleSheet,
 } from 'react-native';
 import LinearGradient from 'react-native-linear-gradient';
-import Header from '../../components/header';
+import Header from '../../components/homeHeader';
 import CategoryCard from '../../components/categoryCard';
 export default ({navigation}) => {
   let handleNavigation = () => {

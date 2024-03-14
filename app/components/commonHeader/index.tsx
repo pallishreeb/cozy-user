@@ -42,25 +42,6 @@ export default ({handleNavigation = () => {}}) => {
           onPress={handleNavigation}
         />
       </View>
-      <View style={styles.whiteBar}></View>
-      <Text style={styles.headerText}>{'Find and book best service'}</Text>
-      <View style={styles.bottomHeaderConatiner}>
-        <Icon
-          name="search"
-          size={20}
-          style={{
-            marginRight: 16,
-          }}
-        />
-        <TextInput
-          placeholder="Find and book best service"
-          style={{
-            color: '#6D5C38',
-            fontSize: 16,
-            flex: 1,
-          }}
-        />
-      </View>
     </View>
   );
 };
@@ -70,35 +51,11 @@ const styles = StyleSheet.create({
     backgroundColor: '#FF3131',
     paddingTop: 7,
     paddingBottom: 35,
-    marginBottom: 17,
   },
   topHeaderConatiner: {
     flexDirection: 'row',
     justifyContent: 'space-between',
     alignItems: 'center',
-    marginBottom: 9,
-    marginHorizontal: 21,
-  },
-  whiteBar: {
-    backgroundColor: '#FFFFFF',
-    marginBottom: 16,
-    width: 500,
-    height: 0.5,
-  },
-  headerText: {
-    color: '#FFFFFF',
-    fontSize: 18,
-    marginBottom: 16,
-    textAlign: 'center',
-    textTransform: 'uppercase',
-    fontWeight: 'bold',
-  },
-  bottomHeaderConatiner: {
-    flexDirection: 'row',
-    alignItems: 'center',
-    backgroundColor: '#FFFFFF',
-    borderRadius: 5,
-    paddingHorizontal: 21,
     marginHorizontal: 21,
   },
 });

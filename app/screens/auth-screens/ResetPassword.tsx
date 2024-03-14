@@ -112,9 +112,9 @@ export default ({navigation, route}) => {
           <View style={styles.fieldContainer}>
             <OtpInput setCurrentOtp={setCurrentOtp} />
           </View>
-          <TouchableOpacity style={styles.resendButton}>
+          {/* <TouchableOpacity style={styles.resendButton}>
             <Text style={styles.resendButtonText}>Resend Code</Text>
-          </TouchableOpacity>
+          </TouchableOpacity> */}
           <View style={styles.fieldContainer}>
             <Text style={styles.label}>Password</Text>
             <Input
@@ -122,6 +122,7 @@ export default ({navigation, route}) => {
               value={password}
               setValue={setPassword}
               leftIconName="lock"
+              isRightIcon={true}
               secureTextEntry={!passwordVisible}
               rightIconName={passwordVisible ? 'eye' : 'eye-slash'}
               iconRightPress={togglePasswordVisibility}
@@ -135,11 +136,12 @@ export default ({navigation, route}) => {
               value={confirmPassword}
               setValue={setConfirmPassword}
               leftIconName="lock"
+              isRightIcon={true}
               secureTextEntry={!confirmPasswordVisible}
               rightIconName={confirmPasswordVisible ? 'eye' : 'eye-slash'}
               iconRightPress={toggleConfirmPasswordVisibility}
             />
-            <Text style={styles.errorMSg}>{errors?.password}</Text>
+            <Text style={styles.errorMSg}>{errors?.confirmPassword}</Text>
           </View>
           <View style={styles.submitButtonConatiner}>
             <SubmitButton

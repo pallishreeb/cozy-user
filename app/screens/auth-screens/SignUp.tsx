@@ -133,7 +133,7 @@ export default ({navigation}) => {
               value={name}
               setValue={setName}
             />
-            <Text style={styles.errorMSg}>{errors?.email}</Text>
+            <Text style={styles.errorMSg}>{errors?.name}</Text>
           </View>
           <View style={styles.fieldContainer}>
             <Text style={styles.label}>Email</Text>
