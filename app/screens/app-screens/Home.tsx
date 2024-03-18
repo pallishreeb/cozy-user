@@ -1,4 +1,4 @@
-import React from 'react';
+import React, {useState} from 'react';
 import {
   SafeAreaView,
   View,
@@ -11,12 +11,21 @@ import LinearGradient from 'react-native-linear-gradient';
 import Header from '../../components/homeHeader';
 import CategoryCard from '../../components/categoryCard';
 export default ({navigation}) => {
+  const [keyword, setKeyword] = useState<string | undefined>('');
   let handleNavigation = () => {
     navigation.navigate('Notification');
   };
   return (
     <SafeAreaView style={styles.container}>
-      <Header handleNavigation={handleNavigation} />
+      <Header
+        handleNavigation={handleNavigation}
+        handleSearch={text => {
+          setKeyword(text);
+        }}
+        onPressSearch={() => {
+          navigation.navigate('SearchResult', {keyword});
+        }}
+      />
       <ScrollView
         style={{
           flex: 1,

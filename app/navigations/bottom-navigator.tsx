@@ -83,6 +83,7 @@ export default function MyTabs() {
           headerShown: false,
         }}
       />
+
       <Tab.Screen
         name="Profile"
         component={Profile}

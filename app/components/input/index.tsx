@@ -1,5 +1,5 @@
 import {StyleSheet, TextInput, TouchableOpacity, View} from 'react-native';
-import React, {useState} from 'react';
+import React from 'react';
 import Icon from 'react-native-vector-icons/FontAwesome';
 type UserInputParams = {
   placeholder: string;
@@ -12,6 +12,7 @@ type UserInputParams = {
   autoCompleteType?: 'email' | 'new-password' | 'current-password' | 'off';
   keyboardType?: 'email-address' | 'default' | undefined;
   secureTextEntry?: boolean;
+  isBordered?: boolean;
 };
 export default ({
   placeholder,

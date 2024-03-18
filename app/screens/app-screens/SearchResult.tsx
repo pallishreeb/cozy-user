@@ -1,13 +1,12 @@
-import React, {useState} from 'react';
-import {StyleSheet, Text, SafeAreaView, FlatList} from 'react-native';
+import {FlatList, StyleSheet, Text} from 'react-native';
+import React from 'react';
 import {
   responsiveHeight as hp,
   responsiveWidth as wp,
   responsiveFontSize as fp,
 } from 'react-native-responsive-dimensions';
-// import Header from '../../components/header';
-
-import Header from '../../components/homeHeader';
+import CustomHeader from '../../components/customHeader';
+import {SafeAreaView} from 'react-native-safe-area-context';
 import ServiceCard from '../../components/serviceCard';
 // Sample appointments array including both past and future dates
 const services = [
@@ -61,29 +60,24 @@ const services = [
     time: '3:30 PM',
   },
 ];
-
-const NearMe = ({navigation}) => {
-  const [pinCode, setPinCode] = useState<string | undefined>('');
+const SearchResult = ({navigation, route}) => {
+  const {keyword} = route.params;
   const renderHeader = () => (
     <>
-      <Text style={styles.headerText2}> Near You (6)</Text>
+      <Text style={styles.headerText}>Results for {keyword}</Text>
     </>
   );
-  const searchResults = () => {};
   return (
     <SafeAreaView style={styles.container}>
       {/* <Header /> */}
-      <Header
-        handleSearch={text => {
-          setPinCode(text);
+      <CustomHeader
+        isNotification={true}
+        onBackPress={() => {
+          navigation.goBack();
         }}
-        onPressSearch={searchResults}
-        handleNavigation={() => {
+        onNotificationPress={() => {
           navigation.navigate('Notification');
         }}
-        screenType="nearMe"
-        label="Your location"
-        placeholder="Enter Your Pin/Zip Code"
       />
       <FlatList
         data={services}
@@ -102,9 +96,17 @@ const NearMe = ({navigation}) => {
   );
 };
 
-export default NearMe;
+export default SearchResult;
 
 const styles = StyleSheet.create({
+  headerText: {
+    fontSize: fp(1.7),
+    textTransform: 'uppercase',
+    color: '#333',
+    fontWeight: 'bold',
+    marginLeft: wp(5),
+    marginVertical: hp(0.5),
+  },
   container: {
     flex: 1,
   },
@@ -114,14 +116,5 @@ const styles = StyleSheet.create({
   },
   flatListContentContainer: {
     paddingBottom: hp(4),
-  },
-
-  headerText2: {
-    fontSize: fp(1.7),
-    textTransform: 'uppercase',
-    color: '#333',
-    fontWeight: 'bold',
-    marginLeft: wp(5),
-    marginVertical: hp(0.5),
   },
 });
