@@ -1,5 +1,5 @@
-import {FlatList, StyleSheet, Text} from 'react-native';
-import React from 'react';
+import {FlatList, Image, StyleSheet, Text, View} from 'react-native';
+import React, {useEffect} from 'react';
 import {
   responsiveHeight as hp,
   responsiveWidth as wp,
@@ -8,65 +8,30 @@ import {
 import CustomHeader from '../../components/customHeader';
 import {SafeAreaView} from 'react-native-safe-area-context';
 import ServiceCard from '../../components/serviceCard';
-// Sample appointments array including both past and future dates
-const services = [
-  {
-    id: 1,
-    providerImage: 'https://via.placeholder.com/150',
-    providerName: 'John Doe',
-    location: '1000  LOS PALOS ST LOS ANGELES CA 90023-2326 USA',
-    date: '2024-03-20',
-    time: '2:00 PM',
-  },
-  {
-    id: 2,
-    providerImage: 'https://via.placeholder.com/150',
-    providerName: 'Jane Smith',
-    location: 'L1000  LOS PALOS ST LOS ANGELES CA 90023-2326 USA',
-    date: '2024-03-22',
-    time: '4:00 PM',
-  },
-  // Assuming the current date is close to the dates above, add some past appointments
-  {
-    id: 3,
-    providerImage: 'https://via.placeholder.com/150',
-    providerName: 'Michael Brown',
-    location: '1000  LOS PALOS ST LOS ANGELES CA 90023-2326 USA',
-    date: '2023-12-15',
-    time: '1:00 PM',
-  },
-  {
-    id: 4,
-    providerImage: 'https://via.placeholder.com/150',
-    providerName: 'Sarah Connor',
-    location: '1000  LOS PALOS ST LOS ANGELES CA 90023-2326 USA',
-    date: '2023-11-10',
-    time: '3:30 PM',
-  },
-  {
-    id: 5,
-    providerImage: 'https://via.placeholder.com/150',
-    providerName: 'Sarah Gregor',
-    location: '1000  LOS PALOS ST LOS ANGELES CA 90023-2326 USA',
-    date: '2023-11-10',
-    time: '3:30 PM',
-  },
-  {
-    id: 6,
-    providerImage: 'https://via.placeholder.com/150',
-    providerName: 'Micheal Greg',
-    location: '1000  LOS PALOS ST LOS ANGELES CA 90023-2326 USA',
-    date: '2023-11-10',
-    time: '3:30 PM',
-  },
-];
+import {useSearchProviders} from '../../hooks/useSearchProviders';
+import Loader from '../../components/loader';
+
 const SearchResult = ({navigation, route}) => {
   const {keyword} = route.params;
+  const {providers, loading, error, fetchProviders} = useSearchProviders();
+
+  useEffect(() => {
+    // Fetch providers based on the keyword when the component mounts or the keyword changes
+    fetchProviders({serviceName: keyword});
+  }, [keyword]);
+
   const renderHeader = () => (
     <>
       <Text style={styles.headerText}>Results for {keyword}</Text>
     </>
   );
+  if (loading) {
+    return <Loader />;
+  }
+  if (error) {
+    return <Text>{error.message || 'Something Went Wrong!'}</Text>;
+  }
+
   return (
     <SafeAreaView style={styles.container}>
       {/* <Header /> */}
@@ -79,19 +44,30 @@ const SearchResult = ({navigation, route}) => {
           navigation.navigate('Notification');
         }}
       />
-      <FlatList
-        data={services}
-        renderItem={({item}) => (
-          <ServiceCard
-            service={item}
-            handleBookService={() => navigation.navigate('ServiceDetails')}
+      {providers.length === 0 ? (
+        <View style={styles.serviceImageConatiner}>
+          <Image
+            style={styles.serviceImage}
+            source={require('../../assets/not-found.png')}
           />
-        )}
-        keyExtractor={item => item.id.toString()}
-        ListHeaderComponent={renderHeader}
-        // Add padding at the bottom to ensure nothing is cut off
-        contentContainerStyle={styles.flatListContentContainer}
-      />
+        </View>
+      ) : (
+        <FlatList
+          data={providers}
+          renderItem={({item}) => (
+            <ServiceCard
+              service={item}
+              handleBookService={() =>
+                navigation.navigate('ServiceDetails', {providerId: item?.id})
+              }
+            />
+          )}
+          keyExtractor={item => item.id.toString()}
+          ListHeaderComponent={renderHeader}
+          // Add padding at the bottom to ensure nothing is cut off
+          contentContainerStyle={styles.flatListContentContainer}
+        />
+      )}
     </SafeAreaView>
   );
 };
@@ -116,5 +92,14 @@ const styles = StyleSheet.create({
   },
   flatListContentContainer: {
     paddingBottom: hp(4),
+  },
+  serviceImageConatiner: {
+    flex: 1, // Takes up all available space below the header
+    justifyContent: 'center', // Centers content vertically
+    alignItems: 'center',
+  },
+  serviceImage: {
+    height: hp(80),
+    width: wp(100),
   },
 });

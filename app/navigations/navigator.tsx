@@ -25,7 +25,7 @@ export default () => {
       if (data != null) {
         const userData = JSON.parse(data);
         dispatch(setSignIn(userData));
-        axiosPrivate.defaults.headers.common.Authorization = `Bearer ${token}`;
+        // axiosPrivate.defaults.headers.common.Authorization = `Bearer ${token}`;
       }
     } catch (error) {
       // error reading value
@@ -36,8 +36,8 @@ export default () => {
   useEffect(() => {
     loadAuthToken();
     // eslint-disable-next-line react-hooks/exhaustive-deps
-  }, [dispatch, token]);
-
+  }, [dispatch, token, isLoggedIn]);
+  axiosPrivate.defaults.headers.common.Authorization = `Bearer ${token}`;
   axiosPrivate.interceptors.response.use(
     async function (response) {
       return response;

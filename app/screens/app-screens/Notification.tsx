@@ -95,14 +95,14 @@ const NotificationsScreen = ({navigation}) => {
       <Text style={styles.headerText1}>
         <Text style={{color: '#333'}}>Your </Text> Notifications
       </Text>
-      <Text style={styles.headerText2}>Your Recent Notifications</Text>
+      {/* <Text style={styles.headerText2}>Your Recent Notifications</Text>
       <View style={styles.grayBar}></View>
       <FlatList
         data={notifications}
         keyExtractor={item => item.id.toString()}
         renderItem={({item}) => <NotificationCard notification={item} />}
         contentContainerStyle={styles.listContainer}
-      />
+      /> */}
     </View>
   );
 };

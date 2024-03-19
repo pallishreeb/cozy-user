@@ -14,7 +14,7 @@ export type AppStackParamList = {
   Chat: undefined;
   SearchResult: {keyword: string};
   ServiceDetails: undefined;
-  BookService: undefined;
+  BookService: {providerId: number};
   Payment: undefined;
   ThankYou: undefined;
 };

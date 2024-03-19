@@ -4,17 +4,105 @@ import {
   View,
   ScrollView,
   Text,
-  Image,
   StyleSheet,
+  FlatList,
 } from 'react-native';
 import LinearGradient from 'react-native-linear-gradient';
 import Header from '../../components/homeHeader';
 import CategoryCard from '../../components/categoryCard';
+import useCategories, {Category, Service} from '../../hooks/useCategories';
+import Loader from '../../components/loader';
+import {IMAGE_URL} from '../../constants';
 export default ({navigation}) => {
+  const {categories, isLoading, error} = useCategories();
   const [keyword, setKeyword] = useState<string | undefined>('');
   let handleNavigation = () => {
     navigation.navigate('Notification');
   };
+  if (isLoading) {
+    return <Loader />;
+  }
+  if (error) {
+    <Text>{error.message}</Text>;
+  }
+  const renderService = ({item}: {item: Service}) => {
+    let images = JSON.parse(item?.images);
+    const serviceImageUri = item?.images[0]
+      ? `${IMAGE_URL}${images[0]}`
+      : 'https://via.placeholder.com/150';
+
+    return (
+      <CategoryCard
+        label={item.name}
+        onPress={() => {
+          navigation.navigate('SearchResult', {keyword: item?.name});
+        }}
+        source={{uri: serviceImageUri}}
+      />
+    );
+  };
+
+  const renderTopCategory = ({item}: {item: Category}) => {
+    const categoryImageUri = item?.image
+      ? `${IMAGE_URL}/category_images/${item?.image}`
+      : 'https://via.placeholder.com/150';
+    return (
+      <CategoryCard
+        label={item.name}
+        onPress={() => {
+          navigation.navigate('SearchResult', {keyword: item?.name});
+        }}
+        source={{uri: categoryImageUri}}
+      />
+    );
+  };
+
+  const renderCategoryServices = ({
+    item,
+    index,
+  }: {
+    item: Category;
+    index: number;
+  }) => {
+    if (item.services.length === 0) {
+      return null; // Skip rendering categories with no services
+    }
+
+    const isGradient = index % 2 === 0;
+    // Only define gradientProps within the scope it's needed
+    const renderContent = () => (
+      <>
+        <View style={styles.categoryHeaderContainer}>
+          <Text style={styles.categoryTitle}>{item.name}</Text>
+        </View>
+        <View style={styles.categoryHeaderContainer}>
+          <FlatList
+            data={item.services}
+            renderItem={renderService}
+            keyExtractor={service => `${service.id}`}
+            horizontal
+            showsHorizontalScrollIndicator={false}
+          />
+        </View>
+      </>
+    );
+
+    if (isGradient) {
+      return (
+        <LinearGradient
+          start={{x: 0, y: 0}}
+          end={{x: 0, y: 1}}
+          colors={['#FC5A54', '#E6E6E6']}
+          style={styles.linearGradientStyle}>
+          {renderContent()}
+        </LinearGradient>
+      );
+    } else {
+      // Use a regular View when no gradient is needed
+      return renderContent();
+    }
+  };
+
   return (
     <SafeAreaView style={styles.container}>
       <Header
@@ -33,115 +121,22 @@ export default ({navigation}) => {
         }}>
         <View style={styles.categoryHeaderContainer}>
           <Text style={[styles.categoryTitle]}>{'Top Categories'}</Text>
-          <Text
-            style={{
-              color: '#F43131',
-              fontSize: 14,
-            }}>
-            {'See All'}
-          </Text>
         </View>
         <View style={styles.categoryHeaderContainer}>
-          <CategoryCard
-            lable="House keeper"
-            source={require('../../assets/house-keeper.png')}
-          />
-          <CategoryCard
-            lable="Gardeners"
-            source={require('../../assets/gardener.png')}
-          />
-          <CategoryCard
-            lable="Divers"
-            source={require('../../assets/drivers.png')}
+          <FlatList
+            data={categories}
+            renderItem={renderTopCategory}
+            keyExtractor={category => `${category.id}`}
+            horizontal
+            showsHorizontalScrollIndicator={false}
           />
         </View>
-
-        <LinearGradient
-          start={{x: 0, y: 0}}
-          end={{x: 0, y: 1}}
-          colors={['#FC5A54', '#E6E6E6']}
-          style={styles.linearGradientStyle}>
-          <View style={styles.categoryHeaderContainer}>
-            <Text style={[styles.categoryTitle]}>{'House & Home'}</Text>
-            <Text
-              style={{
-                color: '#FFFFFF',
-                fontSize: 14,
-              }}>
-              {'See All'}
-            </Text>
-          </View>
-          <View style={styles.categoryHeaderContainer}>
-            <CategoryCard
-              lable="Gardening"
-              source={require('../../assets/gardening.png')}
-            />
-            <CategoryCard
-              lable="Painting Services"
-              source={require('../../assets/painting-services.png')}
-            />
-            <CategoryCard
-              lable="House Cleaning"
-              source={require('../../assets/house-cleaning.png')}
-            />
-          </View>
-        </LinearGradient>
-        <View style={styles.categoryHeaderContainer}>
-          <Text style={[styles.categoryTitle]}>{'Health'}</Text>
-          <Text
-            style={{
-              color: '#F43131',
-              fontSize: 14,
-            }}>
-            {'See All'}
-          </Text>
-        </View>
-        <View style={styles.categoryHeaderContainer}>
-          <CategoryCard
-            lable="Personal Trainers"
-            source={require('../../assets/personal-trainers.png')}
-          />
-          <CategoryCard
-            lable="Message Therapy"
-            source={require('../../assets/massage-therapy.png')}
-          />
-          <CategoryCard
-            lable="Yoga Classes"
-            source={require('../../assets/yoga-classes.png')}
-          />
-        </View>
-        <LinearGradient
-          start={{x: 0, y: 0}}
-          end={{x: 0, y: 1}}
-          colors={['#E6E6E6', '#FC5A54']}
-          style={styles.linearGradientStyle}>
-          <View style={styles.categoryHeaderContainer}>
-            <Text style={[styles.categoryTitle]}>
-              {'Events & Entertainers'}
-            </Text>
-            <Text
-              style={{
-                color: '#505050',
-                fontSize: 14,
-              }}>
-              {'See All'}
-            </Text>
-          </View>
-          <View style={styles.categoryHeaderContainer}>
-            <CategoryCard
-              lable="Gardening"
-              source={require('../../assets/gardening.png')}
-            />
-            <CategoryCard
-              lable="Painting Services"
-              source={require('../../assets/painting-services.png')}
-            />
-            <CategoryCard
-              lable="House Cleaning"
-              source={require('../../assets/house-cleaning.png')}
-            />
-          </View>
-        </LinearGradient>
+        {categories?.length > 0 &&
+          categories.map((category, index) => (
+            <React.Fragment key={category.id}>
+              {renderCategoryServices({item: category, index})}
+            </React.Fragment>
+          ))}
       </ScrollView>
     </SafeAreaView>
   );
@@ -158,6 +153,7 @@ const styles = StyleSheet.create({
     alignItems: 'center',
     marginBottom: 12,
     marginHorizontal: 20,
+    // paddingHorizontal: 15,
   },
   categoryImage: {
     borderRadius: 14,
@@ -165,8 +161,8 @@ const styles = StyleSheet.create({
     height: 97,
   },
   linearGradientStyle: {
-    paddingTop: 20,
-    paddingBottom: 13,
+    paddingTop: 10,
+    paddingBottom: 10,
   },
   categoryTitle: {
     fontWeight: 'bold',

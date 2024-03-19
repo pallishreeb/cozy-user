@@ -1,19 +1,20 @@
-import {Image, StyleSheet, Text, View} from 'react-native';
+import {Image, StyleSheet, Text, TouchableOpacity} from 'react-native';
 import React from 'react';
 
 export default ({
-  lable = '',
+  label = '',
   source = require('../../assets/house-keeper.png'),
+  onPress = () => {},
 }) => {
   return (
-    <View style={styles.categoryHeaderContainer}>
+    <TouchableOpacity style={styles.categoryHeaderContainer} onPress={onPress}>
       <Image
         source={source}
         resizeMode={'stretch'}
         style={styles.categoryImage}
       />
-      <Text style={styles.categoryLabel}>{lable}</Text>
-    </View>
+      <Text style={styles.categoryLabel}>{label}</Text>
+    </TouchableOpacity>
   );
 };
 

@@ -2,15 +2,11 @@ import React from 'react';
 import {View, Text, Image, StyleSheet, TouchableOpacity} from 'react-native';
 import {responsiveFontSize as rf} from 'react-native-responsive-dimensions';
 import Icon from 'react-native-vector-icons/MaterialCommunityIcons';
-// Define TypeScript interfaces for props
-interface Service {
-  providerImage: string;
-  providerName: string;
-  location: string;
-}
+import {IMAGE_URL} from '../../constants';
+import {Provider} from '../../types';
 
 interface ServiceCardProps {
-  service: Service;
+  service: Provider;
   handleBookService: () => {};
 }
 
@@ -20,10 +16,20 @@ const ServiceCard: React.FC<ServiceCardProps> = ({
 }) => {
   return (
     <View style={styles.card}>
-      <Image source={{uri: service.providerImage}} style={styles.image} />
+      <Image
+        source={{
+          uri: service?.profile_pic
+            ? `${IMAGE_URL}/profile_pic/${service?.profile_pic}`
+            : 'https://via.placeholder.com/150',
+        }}
+        style={styles.image}
+      />
       <View style={styles.details}>
-        <Text style={styles.providerName}>{service.providerName}</Text>
-        <Text style={styles.location}>{service.location}</Text>
+        <Text style={styles.providerName}>{service.name}</Text>
+        <Text style={styles.location}>
+          {service.address},{service.city},{service.state},{service.country},
+          {service.zipcode}
+        </Text>
         <TouchableOpacity style={styles.button} onPress={handleBookService}>
           <Icon
             name="calendar-clock-outline"

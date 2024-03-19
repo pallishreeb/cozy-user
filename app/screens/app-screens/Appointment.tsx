@@ -131,14 +131,14 @@ const Appointment = ({navigation}) => {
           navigation.navigate('Notification');
         }}
       />
-      <FlatList
+      {/* <FlatList
         data={filteredAppointments}
         renderItem={({item}) => <AppointmentCard appointment={item} />}
         keyExtractor={item => item.id.toString()}
         ListHeaderComponent={renderHeader}
         // Add padding at the bottom to ensure nothing is cut off
         contentContainerStyle={styles.flatListContentContainer}
-      />
+      /> */}
     </SafeAreaView>
   );
 };

@@ -1,5 +1,5 @@
-import React, {useState} from 'react';
-import {StyleSheet, Text, View, SafeAreaView, ScrollView} from 'react-native';
+import React from 'react';
+import {StyleSheet, Text, SafeAreaView, ScrollView} from 'react-native';
 import {
   responsiveHeight as hp,
   responsiveWidth as wp,
@@ -7,9 +7,17 @@ import {
 } from 'react-native-responsive-dimensions';
 import CustomHeader from '../../components/customHeader';
 import PersonalProfile from '../../components/profile';
-import Button from '../../components/submitButton';
+
+import useProfileData from '../../hooks/useProfileData';
+import Loader from '../../components/loader';
 const Profile = ({navigation}) => {
-  const handleFormSubmit = () => {};
+  const {profileData, isLoading, error, updateProfileData} = useProfileData();
+  if (isLoading) {
+    return <Loader />;
+  }
+  if (error) {
+    return <Text>{error || 'Something Went Wrong!'} </Text>;
+  }
   return (
     <SafeAreaView style={styles.container}>
       <CustomHeader
@@ -25,11 +33,10 @@ const Profile = ({navigation}) => {
         <Text style={styles.headerText1}>
           <Text style={{color: '#333'}}>My</Text> Profile
         </Text>
-        <PersonalProfile />
-        <View style={styles.buttonContainer}>
-          {<Button title="Cancel" />}
-          <Button title="Update" onPress={handleFormSubmit} />
-        </View>
+        <PersonalProfile
+          initialValues={profileData!}
+          updateProfileData={updateProfileData}
+        />
       </ScrollView>
     </SafeAreaView>
   );
@@ -59,11 +66,5 @@ const styles = StyleSheet.create({
     color: '#5B5B5B',
     marginLeft: wp(5),
     marginVertical: hp(0.5),
-  },
-  buttonContainer: {
-    // marginVertical: hp(1),
-    flexDirection: 'row',
-    justifyContent: 'flex-end',
-    marginHorizontal: wp(2),
   },
 });

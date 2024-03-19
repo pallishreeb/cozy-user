@@ -16,34 +16,27 @@ import {
 import Icon from 'react-native-vector-icons/MaterialCommunityIcons';
 import React from 'react';
 import CustomHeader from '../../components/customHeader';
-type ServiceDetailsType = {
-  name: string;
-  address: string;
-  phone: string;
-  imageUrl: string; // Adjusted for simplicity
-  category: string;
-  serviceName: string;
-  experience: string;
-  rate: string;
-  skills: string[];
-  specializations: string[];
-};
+import {useProviderDetails} from '../../hooks/useProviderDetails';
+import Loader from '../../components/loader';
+import {IMAGE_URL} from '../../constants';
+const ServiceDetails = ({navigation, route}) => {
+  const {providerId} = route.params;
+  const {provider, loading, error} = useProviderDetails(providerId);
+  // console.log(provider, 'provider details');
+  if (loading) {
+    return <Loader />;
+  }
+  if (error) {
+    return <Text>{error.message}</Text>;
+  }
 
-const ServiceDetails = ({navigation}) => {
-  // Example service details including new fields
-  const service: ServiceDetailsType = {
-    name: 'John Doe’s Plumbing',
-    address: '123 Main St, City, Country',
-    phone: '+1 234 567 890',
-    imageUrl: 'https://via.placeholder.com/150',
-    category: 'Plumbing',
-    serviceName: 'Leak Fixing',
-    experience: '5 years',
-    rate: '$50/hour',
-    skills: ['Pipe Repair', 'Leak Detection', 'Fixture Replacement'],
-    specializations: ['Residential', 'Commercial'],
-  };
-
+  const fullAddress = `${provider?.address}, ${provider?.city}, ${provider?.state}, ${provider?.country}, ${provider?.zipcode}`;
+  const serviceName = provider?.service?.name || 'N/A';
+  const categoryName = provider?.service?.category?.name || 'N/A';
+  const providerProfilePic = provider?.profile_pic
+    ? `${IMAGE_URL}/profile_pic/${provider?.profile_pic}`
+    : 'https://via.placeholder.com/150';
+  const serviceImages = JSON.parse(provider?.service.images);
   return (
     <SafeAreaView style={styles.container}>
       <CustomHeader
@@ -53,25 +46,30 @@ const ServiceDetails = ({navigation}) => {
       />
       <ScrollView style={styles.scrollView}>
         <View style={styles.detailsContainer}>
-          <Image source={{uri: service.imageUrl}} style={styles.serviceImage} />
+          <Image
+            source={{uri: providerProfilePic}}
+            style={styles.serviceImage}
+          />
           <View style={styles.infoContainer}>
-            <Text style={styles.name}>{service.name}</Text>
-            <Text style={styles.address}>{service.address}</Text>
-            <Text style={styles.phone}>{service.phone}</Text>
+            <Text style={styles.name}>{provider?.name}</Text>
+            <Text style={styles.address}>{fullAddress}</Text>
+            <Text style={styles.phone}>{provider?.mobile_number}</Text>
             <View style={styles.buttonsContainer}>
               <TouchableOpacity
                 style={styles.button}
-                onPress={() => {
-                  navigation.navigate('BookService');
-                }}>
+                // onPress={() => {
+                //   navigation.navigate('BookService');
+                // }}
+              >
                 <Icon name="calendar-clock-outline" size={24} color={'white'} />
                 <Text style={styles.buttonText}>Book Service</Text>
               </TouchableOpacity>
               <TouchableOpacity
                 style={[styles.button, styles.chatButton]}
-                onPress={() => {
-                  navigation.navigate('Chat');
-                }}>
+                // onPress={() => {
+                //   navigation.navigate('Chat');
+                // }}
+              >
                 <Icon name="android-messages" size={24} color={'white'} />
                 <Text style={styles.buttonText}>Chat</Text>
               </TouchableOpacity>
@@ -83,30 +81,45 @@ const ServiceDetails = ({navigation}) => {
         <View style={styles.additionalDetails}>
           <DetailCard
             icon="briefcase-outline"
-            title="Category"
-            value={service.category}
-          />
-          <DetailCard
-            icon="tools"
-            title="Service"
-            value={service.serviceName}
-          />
-          <DetailCard
-            icon="calendar-clock"
             title="Experience"
-            value={service.experience}
+            value={`${provider?.experience} years`}
           />
-          <DetailCard icon="cash" title="Rate" value={service.rate} />
+          <DetailCard icon="cash" title="Rate" value={`$${provider?.rate}`} />
+          <DetailCard
+            icon="format-list-bulleted"
+            title="Service"
+            value={serviceName}
+          />
+          <DetailCard
+            icon="account-group-outline"
+            title="Category"
+            value={categoryName}
+          />
+          {provider?.specialization && (
+            <>
+              <SubHeading text="Specialization" />
+              <Text style={styles.cardValue}>
+                {provider?.specialization! || 'N/A'}
+              </Text>
+            </>
+          )}
 
-          <SubHeading text="Skills" />
-          {service.skills.map((skill, index) => (
-            <ListItem key={index} text={skill} />
-          ))}
-
-          <SubHeading text="Specialization" />
-          {service.specializations.map((specialization, index) => (
-            <ListItem key={index} text={specialization} />
-          ))}
+          {provider?.skills && (
+            <>
+              <SubHeading text="Skills" />
+              {provider?.skills.split(',').map((skill, index) => (
+                <ListItem key={index} text={skill.trim()} />
+              ))}
+            </>
+          )}
+          {serviceImages?.length > 0 &&
+            serviceImages?.map((item: string, index) => (
+              <Image
+                key={index}
+                source={{uri: `${IMAGE_URL}${item}`}}
+                style={styles.serviceImage}
+              />
+            ))}
         </View>
       </ScrollView>
     </SafeAreaView>

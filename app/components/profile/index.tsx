@@ -6,6 +6,7 @@ import {
   TouchableOpacity,
   TextInput,
   Text,
+  Alert,
 } from 'react-native';
 import Icon from 'react-native-vector-icons/MaterialIcons';
 import {launchImageLibrary} from 'react-native-image-picker';
@@ -15,30 +16,88 @@ import {
   responsiveFontSize as rf,
 } from 'react-native-responsive-dimensions';
 import ProfileInput from '../profileInput';
-interface ProfileImage {
+import Button from '../submitButton';
+import {ProfileData} from '../../hooks/useProfileData';
+interface ProfileImageProps {
   uri: string;
+  type: string | undefined;
+  name: string | undefined;
 }
-
-const Profile: React.FC = () => {
-  const [profileImage, setProfileImage] = useState<ProfileImage | null>(null);
-  const [name, setName] = useState('');
-  const [phone, setPhone] = useState('');
-  const [address, setAddress] = useState('');
+interface ProfileFormProps {
+  initialValues: ProfileData;
+  updateProfileData: (updatedData: any) => Promise<boolean>;
+}
+const Profile: React.FC<ProfileFormProps> = ({
+  initialValues,
+  updateProfileData,
+}) => {
+  const [profileImage, setProfileImage] = useState<string | null>(
+    initialValues?.profile_pic!,
+  );
+  const [profilePicFile, setProfilePicFile] =
+    useState<ProfileImageProps | null>(null);
+  const [name, setName] = useState<string>(initialValues?.name);
+  const [mobileNumber, setMobileNumber] = useState<string | null>(
+    initialValues?.mobile_number!,
+  );
+  const [address, setAddress] = useState<string | null>(initialValues?.address);
+  const [zipcode, setZipcode] = useState<string | null>(initialValues?.zipcode);
+  const [city, setCity] = useState<string | null>(initialValues?.city);
+  const [state, setState] = useState<string | null>(initialValues?.state);
+  const [country, setCountry] = useState<string | null>(initialValues?.country);
   const handleChoosePhoto = () => {
-    launchImageLibrary({noData: true}, response => {
-      if (response.assets) {
-        setProfileImage({uri: response.assets[0].uri});
+    const options: any = {
+      mediaType: 'photo',
+      quality: 1,
+    };
+
+    launchImageLibrary(options, response => {
+      if (response.didCancel) {
+        console.log('User cancelled image picker');
+      } else if (response?.error) {
+        console.log('ImagePicker Error: ', response?.error);
+      } else if (response.assets && response.assets[0].uri) {
+        const source = response.assets[0].uri;
+        const FileName = response.assets[0].fileName;
+        const type = response.assets[0].type;
+        setProfilePicFile({uri: source, name: FileName, type});
+        setProfileImage(source); // For UI
       }
     });
   };
-  const handleFormSubmit = () => {};
+  const handleFormSubmit = async () => {
+    const updatedData = {
+      profile_pic: profilePicFile, // Assuming this is the URI string you mentioned
+      name,
+      mobile_number: mobileNumber,
+      address,
+      zipcode,
+      city,
+      state,
+      country,
+    };
+    // Assuming you have a function similar to `updateProfileData` that
+    // updates the profile data and returns a boolean indicating success/failure.
+    const isSuccess = await updateProfileData(updatedData);
+    if (isSuccess) {
+      // console.log('Profile updated successfully');
+      Alert.alert('Message', 'Profile updated successfully');
+    } else {
+      // console.error('Failed to update profile');
+      Alert.alert('Message', 'Failed to update profile');
+    }
+  };
   return (
     <View style={styles.container}>
-      <View style={styles.profileImageContainer}>
+      {/* <View style={styles.profileImageContainer}>
         {profileImage ? (
           <>
             <Image
-              source={{uri: profileImage.uri}}
+              source={{
+                uri: profilePicFile
+                  ? profilePicFile.uri
+                  : `http://10.0.2.2:8000/profile_pic/${profileImage}`,
+              }}
               style={styles.profileImage}
             />
             <TouchableOpacity
@@ -55,7 +114,7 @@ const Profile: React.FC = () => {
             <Text style={styles.placeholderText}>Add Photo</Text>
           </TouchableOpacity>
         )}
-      </View>
+      </View> */}
 
       <ProfileInput
         value={name}
@@ -64,13 +123,13 @@ const Profile: React.FC = () => {
         placeholder="John Doe"
       />
       <ProfileInput
-        value={phone}
-        onChangeText={text => setPhone(text)}
+        value={mobileNumber as string}
+        onChangeText={text => setMobileNumber(text)}
         label="Phone"
         placeholder="+1234567890"
       />
       <ProfileInput
-        value={address}
+        value={address as string}
         onChangeText={text => setAddress(text)}
         label="Address"
         placeholder="123 Main St"
@@ -82,6 +141,8 @@ const Profile: React.FC = () => {
           <TextInput
             style={[styles.input, styles.halfInput]}
             placeholder="12345"
+            value={zipcode as string}
+            onChangeText={text => setZipcode(text)}
           />
         </View>
 
@@ -90,6 +151,8 @@ const Profile: React.FC = () => {
           <TextInput
             style={[styles.input, styles.halfInput]}
             placeholder="Anytown"
+            value={city as string}
+            onChangeText={text => setCity(text)}
           />
         </View>
       </View>
@@ -99,6 +162,8 @@ const Profile: React.FC = () => {
           <TextInput
             style={[styles.input, styles.halfInput]}
             placeholder="Anystate"
+            value={state as string}
+            onChangeText={text => setState(text)}
           />
         </View>
 
@@ -107,8 +172,14 @@ const Profile: React.FC = () => {
           <TextInput
             style={[styles.input, styles.halfInput]}
             placeholder="Any Country"
+            value={country as string}
+            onChangeText={text => setCountry(text)}
           />
         </View>
+      </View>
+      <View style={styles.buttonContainer}>
+        {/* {<Button title="Cancel" />} */}
+        <Button title="Update" onPress={handleFormSubmit} />
       </View>
     </View>
   );
@@ -174,5 +245,11 @@ const styles = StyleSheet.create({
   },
   half: {
     width: '48.5%',
+  },
+  buttonContainer: {
+    marginVertical: rh(1),
+    // flexDirection: 'row',
+    // justifyContent: 'flex-end',
+    // marginHorizontal: rw(2),
   },
 });
