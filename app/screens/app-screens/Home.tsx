@@ -7,6 +7,11 @@ import {
   StyleSheet,
   FlatList,
 } from 'react-native';
+import {
+  responsiveWidth as rw,
+  responsiveHeight as rh,
+  responsiveFontSize as rf,
+} from 'react-native-responsive-dimensions';
 import LinearGradient from 'react-native-linear-gradient';
 import Header from '../../components/homeHeader';
 import CategoryCard from '../../components/categoryCard';
@@ -26,9 +31,10 @@ export default ({navigation}) => {
     <Text>{error.message}</Text>;
   }
   const renderService = ({item}: {item: Service}) => {
-    let images = JSON.parse(item?.images);
-    const serviceImageUri = item?.images[0]
-      ? `${IMAGE_URL}${images[0]}`
+    console.log(item?.images)
+    // let images = item?.images && JSON.parse(item?.images);
+    const serviceImageUri = item?.images
+      ? `${IMAGE_URL}${item?.images[0]}`
       : 'https://via.placeholder.com/150';
 
     return (
@@ -141,7 +147,6 @@ export default ({navigation}) => {
     </SafeAreaView>
   );
 };
-
 const styles = StyleSheet.create({
   container: {
     flex: 1,
@@ -151,24 +156,24 @@ const styles = StyleSheet.create({
     flexDirection: 'row',
     justifyContent: 'space-between',
     alignItems: 'center',
-    marginBottom: 12,
-    marginHorizontal: 20,
-    // paddingHorizontal: 15,
+    marginBottom: rh(1.5), // Converted marginBottom to responsive height
+    marginHorizontal: rw(5), // Converted marginHorizontal to responsive width
+    // paddingHorizontal: rw(3), // You can uncomment this if needed
+    // paddingRight: rf(2),
   },
   categoryImage: {
-    borderRadius: 14,
-    width: 123,
-    height: 97,
+    borderRadius: rw(5.5), // Converted width and height to responsive dimensions
+    width: rw(30), // Adjusted width based on responsive width
+    height: rh(10), // Adjusted height based on responsive height
   },
   linearGradientStyle: {
-    paddingTop: 10,
-    paddingBottom: 10,
+    paddingTop: rh(0.5), // Converted paddingTop to responsive height
+    paddingBottom: rh(0.5), // Converted paddingBottom to responsive height
   },
   categoryTitle: {
     fontWeight: 'bold',
     color: '#6D5C38',
-    // '#505050'
-    fontSize: 20,
+    fontSize: rf(2.5), // Converted fontSize to responsive font size
     textTransform: 'uppercase',
   },
 });

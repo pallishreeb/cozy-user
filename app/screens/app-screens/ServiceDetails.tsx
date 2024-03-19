@@ -7,6 +7,7 @@ import {
   TouchableOpacity,
   ImageSourcePropType,
   ScrollView,
+  FlatList,
 } from 'react-native';
 import {
   responsiveWidth,
@@ -30,13 +31,15 @@ const ServiceDetails = ({navigation, route}) => {
     return <Text>{error.message}</Text>;
   }
 
-  const fullAddress = `${provider?.address}, ${provider?.city}, ${provider?.state}, ${provider?.country}, ${provider?.zipcode}`;
+  const fullAddress = `${provider?.address || ''}, ${provider?.city}, ${
+    provider?.state
+  }, ${provider?.country}, ${provider?.zipcode}`;
   const serviceName = provider?.service?.name || 'N/A';
   const categoryName = provider?.service?.category?.name || 'N/A';
   const providerProfilePic = provider?.profile_pic
     ? `${IMAGE_URL}/profile_pic/${provider?.profile_pic}`
     : 'https://via.placeholder.com/150';
-  const serviceImages = JSON.parse(provider?.service.images);
+  const serviceImages = provider?.service?.images;
   return (
     <SafeAreaView style={styles.container}>
       <CustomHeader
@@ -82,18 +85,24 @@ const ServiceDetails = ({navigation, route}) => {
           <DetailCard
             icon="briefcase-outline"
             title="Experience"
-            value={`${provider?.experience} years`}
+            value={
+              provider?.experience ? `${provider?.experience} years` : 'N/A'
+            }
           />
-          <DetailCard icon="cash" title="Rate" value={`$${provider?.rate}`} />
+          <DetailCard
+            icon="cash"
+            title="Rate"
+            value={provider?.rate ? `$${provider?.rate}` : 'N/A'}
+          />
           <DetailCard
             icon="format-list-bulleted"
             title="Service"
-            value={serviceName}
+            value={serviceName || 'N/A'}
           />
           <DetailCard
             icon="account-group-outline"
             title="Category"
-            value={categoryName}
+            value={categoryName || 'N/A'}
           />
           {provider?.specialization && (
             <>
@@ -112,14 +121,18 @@ const ServiceDetails = ({navigation, route}) => {
               ))}
             </>
           )}
-          {serviceImages?.length > 0 &&
-            serviceImages?.map((item: string, index) => (
+          <FlatList
+            data={serviceImages}
+            renderItem={({item}) => (
               <Image
-                key={index}
                 source={{uri: `${IMAGE_URL}${item}`}}
                 style={styles.serviceImage}
               />
-            ))}
+            )}
+            keyExtractor={(item, index) => index.toString()}
+            horizontal={true}
+            showsHorizontalScrollIndicator={false}
+          />
         </View>
       </ScrollView>
     </SafeAreaView>
