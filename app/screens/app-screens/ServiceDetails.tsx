@@ -60,10 +60,12 @@ const ServiceDetails = ({navigation, route}) => {
             <View style={styles.buttonsContainer}>
               <TouchableOpacity
                 style={styles.button}
-                // onPress={() => {
-                //   navigation.navigate('BookService');
-                // }}
-              >
+                onPress={() => {
+                  navigation.navigate('BookService', {
+                    providerId,
+                    serviceId: provider?.service_id,
+                  });
+                }}>
                 <Icon name="calendar-clock-outline" size={24} color={'white'} />
                 <Text style={styles.buttonText}>Book Service</Text>
               </TouchableOpacity>

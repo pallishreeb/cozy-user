@@ -8,15 +8,18 @@ import ServiceDetails from '../screens/app-screens/ServiceDetails';
 import BookService from '../screens/app-screens/BookService';
 import Payment from '../screens/app-screens/Payment';
 import ThankYou from '../screens/app-screens/ThankYou';
+import EditBooking from '../screens/app-screens/EditBooking';
+import {Appointment} from '../types';
 export type AppStackParamList = {
   MyTabs: undefined;
   Notification: undefined;
   Chat: undefined;
   SearchResult: {keyword: string};
-  ServiceDetails: undefined;
-  BookService: {providerId: number};
+  ServiceDetails: {providerId: number};
+  BookService: {providerId: number; serviceId: number};
   Payment: undefined;
   ThankYou: undefined;
+  EditBooking: {appointment: Appointment};
 };
 const Stack = createNativeStackNavigator<AppStackParamList>();
 
@@ -69,6 +72,13 @@ const AppNavigator = () => {
       <Stack.Screen
         name="BookService"
         component={BookService}
+        options={{
+          headerShown: false,
+        }}
+      />
+      <Stack.Screen
+        name="EditBooking"
+        component={EditBooking}
         options={{
           headerShown: false,
         }}

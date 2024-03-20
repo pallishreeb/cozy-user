@@ -31,7 +31,7 @@ export default ({navigation}) => {
     <Text>{error.message}</Text>;
   }
   const renderService = ({item}: {item: Service}) => {
-    console.log(item?.images)
+    // console.log(item?.images)
     // let images = item?.images && JSON.parse(item?.images);
     const serviceImageUri = item?.images
       ? `${IMAGE_URL}${item?.images[0]}`

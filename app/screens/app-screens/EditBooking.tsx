@@ -1,4 +1,4 @@
-import React, {useState} from 'react';
+import React, {useEffect, useState} from 'react';
 import {
   SafeAreaView,
   StyleSheet,
@@ -14,29 +14,35 @@ import {format} from 'date-fns';
 import CustomHeader from '../../components/customHeader';
 import SubmitButton from '../../components/submitButton';
 import {
-  responsiveHeight as hp,
-  responsiveWidth as wp,
-  responsiveFontSize as fp,
-} from 'react-native-responsive-dimensions';
-import {axiosPrivate} from '../../utils/axiosConfig';
-import {endpoints} from '../../constants';
-import ProfileInput from '../../components/profileInput';
-import useProfileData from '../../hooks/useProfileData';
-import Loader from '../../components/loader';
-import {
   responsiveHeight as rh,
   responsiveWidth as rw,
   responsiveFontSize as rf,
 } from 'react-native-responsive-dimensions';
-const BookService = ({navigation, route}) => {
-  const {providerId, serviceId} = route.params;
+import {axiosPrivate} from '../../utils/axiosConfig';
+import {endpoints} from '../../constants';
+import ProfileInput from '../../components/profileInput';
+import Loader from '../../components/loader';
+import {parseISO} from 'date-fns';
+import useProfileData from '../../hooks/useProfileData';
+const EditBooking = ({navigation, route}) => {
+  const {appointment} = route.params;
   const {profileData, isLoading, error: profileError} = useProfileData();
   const [isSubmitting, setIsSubmitting] = useState(false);
   const [address, setAddress] = useState('');
   const [phone, setPhone] = useState('');
   const [date, setDate] = useState(new Date());
+  const [time, setTime] = useState(new Date());
   const [showDatePicker, setShowDatePicker] = useState(false);
   const [showTimePicker, setShowTimePicker] = useState(false);
+  useEffect(() => {
+    if (appointment) {
+      const parsedTime = parseISO(appointment?.booking_time);
+      setTime(parsedTime);
+      setDate(parseISO(appointment?.booking_date));
+      setAddress(appointment.address);
+      setPhone(appointment.mobile_number);
+    }
+  }, [appointment]);
 
   const onChangeDate = (event, selectedDate) => {
     setShowDatePicker(Platform.OS === 'ios');
@@ -54,23 +60,26 @@ const BookService = ({navigation, route}) => {
   };
   const handleSubmit = async () => {
     const BookingDetails = {
-      provider_id: providerId,
-      service_id: serviceId,
-      user_id: profileData?.id,
+      //   provider_id: providerId,
+      //   service_id: serviceId,
+      //   user_id: profileData?.id,
       address,
       booking_date: format(date, 'yyyy-MM-dd'),
-      booking_time: date,
+      booking_time: time,
       mobile_number: phone,
     };
     // console.log(BookingDetails, 'Booking Details');
+
     setIsSubmitting(true);
     try {
-      const response = await axiosPrivate.post(
-        `${endpoints.BOOK_SERVICE}`,
+      const response = await axiosPrivate.put(
+        `${endpoints.EDIT_BOOKING}/${appointment.id}`,
         BookingDetails,
       );
-      if (response.status === 201) {
-        navigation.navigate('ThankYou');
+      //   console.log(response.status, 'Status of the Response');
+
+      if (response.status === 200) {
+        navigation.navigate('MyTabs', {screen: 'Appointment'});
       } else {
         Alert.alert(
           'Error',
@@ -111,13 +120,13 @@ const BookService = ({navigation, route}) => {
           value={phone}
           onChangeText={text => setPhone(text)}
           label="Phone"
-          placeholder="Enter Your Contact Number"
+          placeholder="9832686823"
         />
         <ProfileInput
           value={address}
           onChangeText={text => setAddress(text)}
           label="Address"
-          placeholder="Enter Complete Address"
+          placeholder="21st Street, New York"
           multiline={true}
         />
         {/* Date Picker */}
@@ -137,18 +146,18 @@ const BookService = ({navigation, route}) => {
         {/* Time Picker */}
         <Text style={styles.label}>Select Time</Text>
         <TouchableOpacity onPress={displayTimePicker} style={styles.dateInput}>
-          <Text style={styles.dateText}>{format(date, 'p')}</Text>
+          <Text style={styles.dateText}>{format(time, 'p')}</Text>
         </TouchableOpacity>
         {showTimePicker && (
           <DateTimePicker
-            value={date}
+            value={time}
             mode="time"
             is24Hour={false} // Explicitly set to false for AM/PM selection
             display="default"
             onChange={(event, selectedTime) => {
               setShowTimePicker(Platform.OS === 'ios');
               if (selectedTime) {
-                setDate(selectedTime);
+                setTime(selectedTime);
               }
             }}
           />
@@ -156,7 +165,7 @@ const BookService = ({navigation, route}) => {
 
         <View style={styles.buttonContainer}>
           <SubmitButton
-            title={isSubmitting ? 'Booking Service' : 'Book Service'}
+            title={isSubmitting ? 'Editing Appointment' : 'Edit Appointment'}
             disabled={isSubmitting}
             onPress={handleSubmit}
           />
@@ -166,55 +175,55 @@ const BookService = ({navigation, route}) => {
   );
 };
 
-export default BookService;
+export default EditBooking;
 
 const styles = StyleSheet.create({
   container: {
     flex: 1,
   },
   formContainer: {
-    padding: hp(2),
+    padding: rh(2),
   },
   headerText: {
-    fontSize: fp(2),
+    fontSize: rf(2),
     textTransform: 'uppercase',
     color: '#333',
     fontWeight: 'bold',
-    marginLeft: wp(1),
-    marginVertical: hp(2),
+    marginLeft: rw(1),
+    marginVertical: rh(2),
   },
   buttonContainer: {
-    marginVertical: hp(2),
+    marginVertical: rh(2),
   },
   datePickerInput: {
     borderWidth: 1,
     borderColor: '#ddd',
-    padding: wp(2.5),
-    marginBottom: hp(1),
-    borderRadius: wp(1.2),
+    padding: rw(2.5),
+    marginBottom: rh(1),
+    borderRadius: rw(1.2),
     justifyContent: 'center',
-    height: hp(6), // Adjust the height as necessary
+    height: rh(6), // Adjust the height as necessary
   },
   datePickerText: {
-    fontSize: fp(2),
+    fontSize: rf(2),
     color: '#000',
   },
   label: {
-    fontSize: fp(2),
+    fontSize: rf(2),
     color: '#000',
-    marginBottom: hp(1),
-    marginLeft: wp(2),
+    marginBottom: rh(1),
+    marginLeft: rw(2),
   },
   dateInput: {
     borderWidth: 1,
     borderColor: '#ddd',
-    padding: wp(2.5),
-    marginBottom: hp(1),
-    borderRadius: wp(1.2),
+    padding: rw(2.5),
+    marginBottom: rh(1),
+    borderRadius: rw(1.2),
     width: '100%',
   },
   dateText: {
-    fontSize: fp(2),
+    fontSize: rf(2),
   },
   nameText: {
     borderWidth: 1,

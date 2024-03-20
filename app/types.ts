@@ -1,3 +1,5 @@
+import {Service} from './hooks/useCategories';
+
 export interface Provider {
   id: number;
   name: string;
@@ -17,7 +19,7 @@ export interface Provider {
   rate: string;
   specialization: string;
   portfolio: string;
-  profile_pic: string;
+  profile_pic: string | null;
   created_at: string;
   updated_at: string;
   email_verified_at: null; // Adjust the type if it can be a different type
@@ -48,4 +50,22 @@ interface ServiceForProvider {
   created_at: string;
   updated_at: string;
   category: CategoryForService;
+}
+export interface Appointment {
+  id: number;
+  service_id: number;
+  provider_id: number;
+  user_id: number;
+  zipcode: string;
+  address: string;
+  city: string;
+  state: string;
+  country: string;
+  booking_date: string;
+  booking_time: string;
+  status: string;
+  created_at: string;
+  updated_at: string;
+  provider: Provider;
+  service: Service;
 }

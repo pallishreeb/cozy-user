@@ -15,71 +15,35 @@ import {
 // import Header from '../../components/header';
 import AppointmentCard from '../../components/appointmentCard';
 import CustomHeader from '../../components/customHeader';
+import useProfileData from '../../hooks/useProfileData';
+import useAppointments from '../../hooks/useAppointments';
+import {useFocusEffect} from '@react-navigation/native';
 
-// Sample appointments array including both past and future dates
-const appointments = [
-  {
-    id: 1,
-    providerImage: 'https://via.placeholder.com/150',
-    providerName: 'John Doe',
-    location: 'New York',
-    date: '2024-03-20',
-    time: '2:00 PM',
-  },
-  {
-    id: 2,
-    providerImage: 'https://via.placeholder.com/150',
-    providerName: 'Jane Smith',
-    location: 'Los Angeles',
-    date: '2024-03-22',
-    time: '4:00 PM',
-  },
-  // Assuming the current date is close to the dates above, add some past appointments
-  {
-    id: 3,
-    providerImage: 'https://via.placeholder.com/150',
-    providerName: 'Michael Brown',
-    location: 'Chicago',
-    date: '2023-12-15',
-    time: '1:00 PM',
-  },
-  {
-    id: 4,
-    providerImage: 'https://via.placeholder.com/150',
-    providerName: 'Sarah Connor',
-    location: 'San Francisco',
-    date: '2023-11-10',
-    time: '3:30 PM',
-  },
-  {
-    id: 5,
-    providerImage: 'https://via.placeholder.com/150',
-    providerName: 'Sarah Gregor',
-    location: 'San Francisco',
-    date: '2023-11-10',
-    time: '3:30 PM',
-  },
-  {
-    id: 6,
-    providerImage: 'https://via.placeholder.com/150',
-    providerName: 'Micheal Greg',
-    location: 'Las Vegas',
-    date: '2023-11-10',
-    time: '3:30 PM',
-  },
-];
+import Loader from '../../components/loader';
 
 const Appointment = ({navigation}) => {
   const [showPastAppointments, setShowPastAppointments] = useState(false);
-
-  // Function to filter appointments based on date
-  const filteredAppointments = appointments.filter(appointment => {
-    const appointmentDate = new Date(appointment.date);
-    const currentDate = new Date();
-    return showPastAppointments
-      ? appointmentDate < currentDate
-      : appointmentDate >= currentDate;
-  });
+  const {
+    profileData,
+    isLoading: profileLoading,
+    error: profileError,
+  } = useProfileData();
+  const {
+    appointments,
+    isLoading,
+    error,
+    refreshAppointments,
+    cancelAppointment,
+  } = useAppointments(profileData?.id!, showPastAppointments);
+  useFocusEffect(
+    React.useCallback(() => {
+      // Call the function to refresh appointments here
+      // This assumes your useAppointments hook is designed to refetch data when invoked
+      if (profileData?.id) {
+        refreshAppointments(); // You might need to modify your hook to expose a method to refresh the appointments explicitly or ensure it automatically refetches when invoked.
+      }
+    }, [showPastAppointments, profileData?.id!]),
+  );
   const renderHeader = () => (
     <>
       <Text style={styles.headerText1}>
@@ -113,7 +77,7 @@ const Appointment = ({navigation}) => {
               styles.toggleButtonText,
               showPastAppointments && styles.toggleActiveButtonText,
             ]}>
-            Past Appointments
+            All Appointments
           </Text>
         </TouchableOpacity>
       </View>
@@ -131,14 +95,34 @@ const Appointment = ({navigation}) => {
           navigation.navigate('Notification');
         }}
       />
-      {/* <FlatList
-        data={filteredAppointments}
-        renderItem={({item}) => <AppointmentCard appointment={item} />}
-        keyExtractor={item => item.id.toString()}
-        ListHeaderComponent={renderHeader}
-        // Add padding at the bottom to ensure nothing is cut off
-        contentContainerStyle={styles.flatListContentContainer}
-      /> */}
+      {isLoading || profileLoading ? (
+        <Loader />
+      ) : error || profileError ? (
+        <Text>
+          Error: {profileError || error?.message || 'An Error occured!'}
+        </Text>
+      ) : (
+        <FlatList
+          data={appointments}
+          renderItem={({item}) => (
+            <AppointmentCard
+              appointment={item}
+              onEdit={() =>
+                navigation.navigate('EditBooking', {appointment: item})
+              }
+              onCancel={() => {
+                cancelAppointment(item?.id);
+                refreshAppointments();
+              }}
+              onChat={() => navigation.navigate('Chat')}
+            />
+          )}
+          keyExtractor={item => item?.id?.toString()}
+          ListHeaderComponent={renderHeader}
+          contentContainerStyle={styles.flatListContentContainer}
+        />
+      )}
+   
     </SafeAreaView>
   );
 };

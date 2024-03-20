@@ -7,19 +7,21 @@ import {
 } from 'react-native-responsive-dimensions';
 
 type Props = {
-  onChangeText: (text: string) => void;
+  onChangeText?: (text: string) => void;
   value: string;
   placeholder: string;
   label: string;
   multiline?: boolean;
+  readonly?: boolean;
 };
 
 const ProfileInput = ({
   value,
-  onChangeText,
+  onChangeText = () => {},
   placeholder,
   label,
   multiline = false,
+  readonly = false,
 }: Props): JSX.Element => {
   const [isFocused, setIsFocused] = useState(false);
 
@@ -43,6 +45,7 @@ const ProfileInput = ({
         onChangeText={onChangeText}
         onFocus={() => setIsFocused(true)}
         onBlur={() => setIsFocused(false)}
+        readOnly={readonly}
       />
     </View>
   );

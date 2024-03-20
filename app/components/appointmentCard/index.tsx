@@ -1,33 +1,66 @@
 import React from 'react';
 import {View, Text, Image, StyleSheet, TouchableOpacity} from 'react-native';
-
-// Define TypeScript interfaces for props
-interface Appointment {
-  providerImage: string;
-  providerName: string;
-  location: string;
-  date: string;
-  time: string;
-}
-
+import {IMAGE_URL} from '../../constants';
+import {Appointment} from '../../types';
+import {format} from 'date-fns';
+import Icon from 'react-native-vector-icons/MaterialIcons';
 interface AppointmentCardProps {
   appointment: Appointment;
+  onEdit?: () => void;
+  onCancel?: () => void;
+  onChat?: () => void;
 }
 
-const AppointmentCard: React.FC<AppointmentCardProps> = ({appointment}) => {
+const AppointmentCard: React.FC<AppointmentCardProps> = ({
+  appointment,
+  onEdit,
+  onCancel,
+  onChat,
+}) => {
+  const providerProfilePic = appointment?.service?.images
+    ? `${IMAGE_URL}${appointment?.service?.images[0]}`
+    : 'https://via.placeholder.com/150';
   return (
     <View style={styles.card}>
-      <Image source={{uri: appointment.providerImage}} style={styles.image} />
+      <Image source={{uri: providerProfilePic}} style={styles.image} />
       <View style={styles.details}>
-        <Text style={styles.providerName}>{appointment.providerName}</Text>
-        <Text style={styles.location}>{appointment.location}</Text>
-        <View style={styles.dateTimeRow}>
-          <Text>{appointment.date}</Text>
-          <Text>{appointment.time}</Text>
+        <View style={styles.header}>
+          <Text style={styles.providerName}>{appointment.provider.name}</Text>
+          {appointment.status === 'pending' && (
+            <TouchableOpacity onPress={onEdit} style={styles.editIconContainer}>
+              <Icon name="edit" size={24} color="#5B5B5B" />
+            </TouchableOpacity>
+          )}
         </View>
-        <TouchableOpacity style={styles.button}>
-          <Text style={styles.buttonText}>Cancel</Text>
-        </TouchableOpacity>
+        <Text style={styles.location}>{appointment.address}</Text>
+        <View style={styles.dateTimeRow}>
+          <Text>{appointment.booking_date}</Text>
+          <Text>{format(appointment.booking_time, 'p')}</Text>
+        </View>
+        <View
+          style={{
+            flex: 1,
+            flexDirection: 'row',
+            alignItems: 'center',
+            gap: 10,
+          }}>
+          {appointment.status === 'cancelled' ? (
+            <TouchableOpacity style={styles.button} disabled>
+              <Text style={styles.buttonText}>Cancelled</Text>
+            </TouchableOpacity>
+          ) : appointment.status === 'completed' ? (
+            <TouchableOpacity style={styles.button} disabled>
+              <Text style={styles.buttonText}>Completed</Text>
+            </TouchableOpacity>
+          ) : (
+            <TouchableOpacity style={styles.button} onPress={onCancel}>
+              <Text style={styles.buttonText}>Cancel</Text>
+            </TouchableOpacity>
+          )}
+          <TouchableOpacity style={styles.button} onPress={onChat}>
+            <Text style={styles.buttonText}>Chat</Text>
+          </TouchableOpacity>
+        </View>
       </View>
     </View>
   );
@@ -48,7 +81,7 @@ const styles = StyleSheet.create({
   },
   image: {
     width: 130,
-    height: 130,
+    height: 140,
     borderRadius: 20,
   },
   details: {
@@ -67,22 +100,34 @@ const styles = StyleSheet.create({
   dateTimeRow: {
     flexDirection: 'row',
     justifyContent: 'space-between',
-    paddingVertical: 8,
+    paddingVertical: 5,
     paddingHorizontal: 10,
     borderRadius: 10,
-    marginVertical: 8,
+    marginVertical: 5,
     backgroundColor: '#D7D7D7',
   },
   button: {
     backgroundColor: '#E3E3E3',
-    width: 120,
+    // width: 120,
     paddingVertical: 10,
-    paddingHorizontal: 10,
-    borderRadius: 20,
+    paddingHorizontal: 30,
+    borderRadius: 5,
   },
   buttonText: {
     textAlign: 'center',
     color: '#5B5B5B',
     fontWeight: 'bold',
+  },
+  editIconContainer: {
+    // Add styles for the edit icon container if necessary
+  },
+  editIcon: {
+    width: 24,
+    height: 24,
+  },
+  header: {
+    flexDirection: 'row',
+    justifyContent: 'space-between',
+    alignItems: 'center',
   },
 });

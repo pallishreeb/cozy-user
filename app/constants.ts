@@ -11,5 +11,10 @@ export const endpoints = {
   SEARCH_SERVICE: 'providers/search',
   NEAR_ME: 'providers/near-me',
   PROVIDER_DETAILS: '/providers',
+  BOOK_SERVICE: 'bookings',
+  EDIT_BOOKING: 'bookings',
+  USER_BOOKINGS: 'bookings/user/',
+  USER_PENDING_BOOkINGS: 'bookings/user/pending',
+  CANCEL_BOOKING: 'bookings',
 };
 export const IMAGE_URL = 'http://10.0.2.2:8000';
