@@ -13,6 +13,8 @@ import {
   responsiveFontSize as fp,
 } from 'react-native-responsive-dimensions';
 import Header from '../../components/customHeader'; // Assuming you have a header component
+import {AppStackParamList} from '../../navigations/app-navigator';
+import {NativeStackScreenProps} from '@react-navigation/native-stack';
 
 // Mock data for notifications
 const notifications = [
@@ -82,8 +84,13 @@ const NotificationCard = ({notification}) => {
   );
 };
 
+type NotificationScreenProps = NativeStackScreenProps<
+  AppStackParamList,
+  'Notification'
+>;
+
 // The Notifications screen
-const NotificationsScreen = ({navigation}) => {
+const NotificationsScreen = ({navigation}: NotificationScreenProps) => {
   return (
     <View style={styles.container}>
       <Header
@@ -92,10 +99,10 @@ const NotificationsScreen = ({navigation}) => {
         }}
         isNotification={false}
       />
-      <Text style={styles.headerText1}>
+      {/* <Text style={styles.headerText1}>
         <Text style={{color: '#333'}}>Your </Text> Notifications
       </Text>
-      {/* <Text style={styles.headerText2}>Your Recent Notifications</Text>
+      <Text style={styles.headerText2}>Your Recent Notifications</Text>
       <View style={styles.grayBar}></View>
       <FlatList
         data={notifications}

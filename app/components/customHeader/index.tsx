@@ -21,7 +21,7 @@ const CustomHeader: React.FC<CustomHeaderProps> = ({
   title,
   onBackPress,
   onNotificationPress,
-  isNotification = true,
+  isNotification = false,
 }) => {
   return (
     <View style={styles.headerContainer}>

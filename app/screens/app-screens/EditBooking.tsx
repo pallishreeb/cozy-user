@@ -8,7 +8,9 @@ import {
   Platform,
   Alert,
 } from 'react-native';
-import DateTimePicker from '@react-native-community/datetimepicker';
+import DateTimePicker, {
+  DateTimePickerEvent,
+} from '@react-native-community/datetimepicker';
 import {format} from 'date-fns';
 
 import CustomHeader from '../../components/customHeader';
@@ -24,7 +26,13 @@ import ProfileInput from '../../components/profileInput';
 import Loader from '../../components/loader';
 import {parseISO} from 'date-fns';
 import useProfileData from '../../hooks/useProfileData';
-const EditBooking = ({navigation, route}) => {
+import {AppStackParamList} from '../../navigations/app-navigator';
+import {NativeStackScreenProps} from '@react-navigation/native-stack';
+type EditBookingScreenProps = NativeStackScreenProps<
+  AppStackParamList,
+  'EditBooking'
+>;
+const EditBooking = ({navigation, route}: EditBookingScreenProps) => {
   const {appointment} = route.params;
   const {profileData, isLoading, error: profileError} = useProfileData();
   const [isSubmitting, setIsSubmitting] = useState(false);
@@ -32,6 +40,8 @@ const EditBooking = ({navigation, route}) => {
   const [phone, setPhone] = useState('');
   const [date, setDate] = useState(new Date());
   const [time, setTime] = useState(new Date());
+  const [phoneError, setPhoneError] = useState('');
+  const [addressError, setAddressError] = useState('');
   const [showDatePicker, setShowDatePicker] = useState(false);
   const [showTimePicker, setShowTimePicker] = useState(false);
   useEffect(() => {
@@ -39,12 +49,15 @@ const EditBooking = ({navigation, route}) => {
       const parsedTime = parseISO(appointment?.booking_time);
       setTime(parsedTime);
       setDate(parseISO(appointment?.booking_date));
-      setAddress(appointment.address);
-      setPhone(appointment.mobile_number);
+      setAddress(appointment?.address);
+      setPhone(appointment?.mobile_number);
     }
   }, [appointment]);
 
-  const onChangeDate = (event, selectedDate) => {
+  const onChangeDate = (
+    event: DateTimePickerEvent,
+    selectedDate?: Date | undefined,
+  ) => {
     setShowDatePicker(Platform.OS === 'ios');
     if (selectedDate) {
       setDate(selectedDate);
@@ -58,11 +71,32 @@ const EditBooking = ({navigation, route}) => {
   const displayTimePicker = () => {
     setShowTimePicker(true);
   };
+  const validateInputs = () => {
+    let isValid = true;
+
+    // Simple validation examples
+    if (phone.trim().length === 10) {
+      // setPhoneError('Phone number must be at least 10 digits.');
+      setPhoneError('Phone number is required');
+      isValid = false;
+    } else {
+      setPhoneError('');
+    }
+
+    if (address.trim().length === 0) {
+      setAddressError('Address cannot be empty.');
+      isValid = false;
+    } else {
+      setAddressError('');
+    }
+
+    return isValid;
+  };
   const handleSubmit = async () => {
+    if (!validateInputs()) {
+      return; // Stop the submission if validation fails
+    }
     const BookingDetails = {
-      //   provider_id: providerId,
-      //   service_id: serviceId,
-      //   user_id: profileData?.id,
       address,
       booking_date: format(date, 'yyyy-MM-dd'),
       booking_time: time,
@@ -105,72 +139,91 @@ const EditBooking = ({navigation, route}) => {
   return (
     <SafeAreaView style={styles.container}>
       <CustomHeader
-        isNotification={true}
+        isNotification={false}
         onBackPress={() => navigation.goBack()}
         onNotificationPress={() => navigation.navigate('Notification')}
       />
-      <View style={styles.formContainer}>
-        <Text style={styles.headerText}>
-          Before Booking ,Provide Some Information
+      {isLoading ? (
+        <Loader />
+      ) : profileError || !profileData ? (
+        <Text style={[styles.errorText, {textAlign: 'center'}]}>
+          {profileError || 'An error occurred'}
         </Text>
+      ) : (
+        <View style={styles.formContainer}>
+          <Text style={styles.headerText}>
+            Before Booking ,Provide Some Information
+          </Text>
 
-        <Text style={styles.nameLabel}>Name</Text>
-        <Text style={styles.nameText}>{profileData?.name}</Text>
-        <ProfileInput
-          value={phone}
-          onChangeText={text => setPhone(text)}
-          label="Phone"
-          placeholder="9832686823"
-        />
-        <ProfileInput
-          value={address}
-          onChangeText={text => setAddress(text)}
-          label="Address"
-          placeholder="21st Street, New York"
-          multiline={true}
-        />
-        {/* Date Picker */}
-        <Text style={styles.label}>Select Date</Text>
-        <TouchableOpacity onPress={displayDatePicker} style={styles.dateInput}>
-          <Text style={styles.dateText}>{format(date, 'PP')}</Text>
-        </TouchableOpacity>
-        {showDatePicker && (
-          <DateTimePicker
-            value={date}
-            mode="date"
-            display="default"
-            onChange={onChangeDate}
+          <Text style={styles.nameLabel}>Name</Text>
+          <Text style={styles.nameText}>{profileData?.name}</Text>
+          <ProfileInput
+            value={phone}
+            onChangeText={text => setPhone(text)}
+            label="Phone"
+            placeholder="Enter your  phone number"
           />
-        )}
+          {phoneError ? (
+            <Text style={styles.errorText}>{phoneError}</Text>
+          ) : null}
+          <ProfileInput
+            value={address}
+            onChangeText={text => setAddress(text)}
+            label="Address"
+            placeholder="Enter Your Full Address"
+            multiline={true}
+          />
+          {addressError ? (
+            <Text style={styles.errorText}>{addressError}</Text>
+          ) : null}
+          {/* Date Picker */}
+          <Text style={styles.label}>Select Date</Text>
+          <TouchableOpacity
+            onPress={displayDatePicker}
+            style={styles.dateInput}>
+            <Text style={styles.dateText}>{format(date, 'PP')}</Text>
+          </TouchableOpacity>
+          {showDatePicker && (
+            <DateTimePicker
+              value={date}
+              mode="date"
+              display="default"
+              onChange={onChangeDate}
+              minimumDate={date}
+            />
+          )}
 
-        {/* Time Picker */}
-        <Text style={styles.label}>Select Time</Text>
-        <TouchableOpacity onPress={displayTimePicker} style={styles.dateInput}>
-          <Text style={styles.dateText}>{format(time, 'p')}</Text>
-        </TouchableOpacity>
-        {showTimePicker && (
-          <DateTimePicker
-            value={time}
-            mode="time"
-            is24Hour={false} // Explicitly set to false for AM/PM selection
-            display="default"
-            onChange={(event, selectedTime) => {
-              setShowTimePicker(Platform.OS === 'ios');
-              if (selectedTime) {
-                setTime(selectedTime);
-              }
-            }}
-          />
-        )}
+          {/* Time Picker */}
+          <Text style={styles.label}>Select Time</Text>
+          <TouchableOpacity
+            onPress={displayTimePicker}
+            style={styles.dateInput}>
+            <Text style={styles.dateText}>{format(time, 'p')}</Text>
+          </TouchableOpacity>
+          {showTimePicker && (
+            <DateTimePicker
+              value={time}
+              mode="time"
+              is24Hour={false} // Explicitly set to false for AM/PM selection
+              display="default"
+              onChange={(event, selectedTime) => {
+                setShowTimePicker(Platform.OS === 'ios');
+                if (selectedTime) {
+                  setTime(selectedTime);
+                }
+              }}
+            />
+          )}
 
-        <View style={styles.buttonContainer}>
-          <SubmitButton
-            title={isSubmitting ? 'Editing Appointment' : 'Edit Appointment'}
-            disabled={isSubmitting}
-            onPress={handleSubmit}
-          />
+          <View style={styles.buttonContainer}>
+            <SubmitButton
+              title={isSubmitting ? 'Editing Appointment' : 'Edit Appointment'}
+              disabled={isSubmitting}
+              onPress={handleSubmit}
+            />
+          </View>
         </View>
-      </View>
+      )}
     </SafeAreaView>
   );
 };
@@ -241,5 +294,11 @@ const styles = StyleSheet.create({
     color: '#000',
     marginBottom: rh(1),
     marginLeft: rw(2),
+  },
+  errorText: {
+    color: 'red',
+    fontSize: rf(1.8),
+    marginLeft: rw(2),
+    marginVertical: rh(0.5),
   },
 });

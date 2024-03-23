@@ -15,7 +15,6 @@ import {
 } from '../redux/slices/authSlice';
 export default () => {
   let isLoggedIn = useSelector(selectIsLoggedIn);
-
   const token = useSelector(selectToken);
   const dispatch = useDispatch();
   // Check if user is logged in on
@@ -43,8 +42,8 @@ export default () => {
       return response;
     },
     async function (error) {
-      let res = error.response;
-      if (res.status === 401 && res.config && !res.config.__isRetryRequest) {
+      let res = error?.response;
+      if (res?.status === 401 && res?.config && !res?.config.__isRetryRequest) {
         await AsyncStorage.removeItem('@auth');
         dispatch(setSignOut());
       }

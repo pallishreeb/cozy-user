@@ -21,7 +21,13 @@ import SubmitButton from '../../components/submitButton';
 import OtpInput from '../../components/otpInput';
 import {axiosPublic} from '../../utils/axiosConfig';
 import {endpoints} from '../../constants';
-export default ({navigation, route}) => {
+import {AuthStackParamList} from '../../navigations/auth-navigator';
+import {NativeStackScreenProps} from '@react-navigation/native-stack';
+type VerificationCodeScreenProps = NativeStackScreenProps<
+  AuthStackParamList,
+  'VerificationCode'
+>;
+export default ({navigation, route}: VerificationCodeScreenProps) => {
   const {email, previousRoute} = route.params;
   const [currentOtp, setCurrentOtp] = useState('');
   const [isLoading, setIsLoading] = useState(false);
@@ -38,7 +44,7 @@ export default ({navigation, route}) => {
           onPress: () => navigation.navigate('SignIn'),
         },
       ]);
-    } catch (error) {
+    } catch (error: Error | any) {
       console.log('inside catch', error?.response);
       Alert.alert(
         'Information',

@@ -8,8 +8,13 @@ import {
 } from 'react-native';
 import React, {useEffect} from 'react';
 import CustomHeader from '../../components/customHeader';
-
-const ThankYou = ({navigation}) => {
+import {AppStackParamList} from '../../navigations/app-navigator';
+import {NativeStackScreenProps} from '@react-navigation/native-stack';
+type ThankYouScreenProps = NativeStackScreenProps<
+  AppStackParamList,
+  'ThankYou'
+>;
+const ThankYou = ({navigation}: ThankYouScreenProps) => {
   useEffect(() => {
     const timer = setTimeout(() => {
       navigation.navigate('MyTabs', {screen: 'Home'}); // Adjust this to your home page route

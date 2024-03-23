@@ -6,7 +6,7 @@ const Payment = ({navigation}) => {
   return (
     <SafeAreaView style={styles.container}>
       <CustomHeader
-        isNotification={true}
+        isNotification={false}
         title="PAYMENT"
         onBackPress={() => navigation.goBack()}
         onNotificationPress={() => navigation.navigate('Notification')}

@@ -20,7 +20,13 @@ import Input from '../../components/input';
 import SubmitButton from '../../components/submitButton';
 import {axiosPublic} from '../../utils/axiosConfig';
 import {endpoints} from '../../constants';
-export default ({navigation}) => {
+import {AuthStackParamList} from '../../navigations/auth-navigator';
+import {NativeStackScreenProps} from '@react-navigation/native-stack';
+type ForgotPasswordScreenProps = NativeStackScreenProps<
+  AuthStackParamList,
+  'ForgotPassword'
+>;
+export default ({navigation}: ForgotPasswordScreenProps) => {
   const [email, setEmail] = useState('');
   const [errors, setErrors] = useState<{
     email: string | null;
@@ -65,7 +71,7 @@ export default ({navigation}) => {
           onPress: () => navigation.navigate('ResetPassword', {email}),
         },
       ]);
-    } catch (error) {
+    } catch (error: Error | any) {
       console.log('inside catch', error?.response);
     } finally {
       setIsLoading(false);

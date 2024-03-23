@@ -3,6 +3,11 @@ import {View, Text, Image, StyleSheet, TouchableOpacity} from 'react-native';
 import {IMAGE_URL} from '../../constants';
 import {Appointment} from '../../types';
 import {format} from 'date-fns';
+import {
+  responsiveWidth,
+  responsiveHeight,
+  responsiveFontSize,
+} from 'react-native-responsive-dimensions';
 import Icon from 'react-native-vector-icons/MaterialIcons';
 interface AppointmentCardProps {
   appointment: Appointment;
@@ -32,25 +37,33 @@ const AppointmentCard: React.FC<AppointmentCardProps> = ({
             </TouchableOpacity>
           )}
         </View>
-        <Text style={styles.location}>{appointment.address}</Text>
-        <View style={styles.dateTimeRow}>
-          <Text>{appointment.booking_date}</Text>
-          <Text>{format(appointment.booking_time, 'p')}</Text>
+        <View style={styles.locationRow}>
+          <Icon name="location-on" size={20} color="#5B5B5B" />
+          <Text style={styles.location}>{appointment.address}</Text>
         </View>
-        <View
-          style={{
-            flex: 1,
-            flexDirection: 'row',
-            alignItems: 'center',
-            gap: 10,
-          }}>
+        <View style={styles.phoneRow}>
+          <Icon name="phone" size={20} color="#5B5B5B" />
+          <Text style={styles.phoneNumber}>{appointment.mobile_number}</Text>
+        </View>
+
+        <View style={styles?.dateTimeRow}>
+          <Text>{appointment?.booking_date}</Text>
+          <Text>{format(appointment?.booking_time, 'p')}</Text>
+        </View>
+        <View style={styles.actionButtonContainer}>
           {appointment.status === 'cancelled' ? (
-            <TouchableOpacity style={styles.button} disabled>
+            <TouchableOpacity
+              style={[styles.button, styles.disabledButton]}
+              disabled>
               <Text style={styles.buttonText}>Cancelled</Text>
             </TouchableOpacity>
           ) : appointment.status === 'completed' ? (
-            <TouchableOpacity style={styles.button} disabled>
-              <Text style={styles.buttonText}>Completed</Text>
+            <TouchableOpacity
+              style={[styles.button, styles.completedButton]}
+              disabled>
+              <Text style={[styles.buttonText, styles.completedButtontext]}>
+                Completed
+              </Text>
             </TouchableOpacity>
           ) : (
             <TouchableOpacity style={styles.button} onPress={onCancel}>
@@ -71,52 +84,72 @@ export default AppointmentCard;
 const styles = StyleSheet.create({
   card: {
     flexDirection: 'row',
-    paddingHorizontal: 10,
-    paddingVertical: 15,
-    marginVertical: 5,
-    marginHorizontal: 10,
-    borderColor: '#E3E3E3', // Border color
-    borderWidth: 2, // Border width
-    borderRadius: 5,
+    paddingHorizontal: responsiveWidth(2.5),
+    paddingVertical: responsiveHeight(1),
+    marginVertical: responsiveHeight(0.5),
+    marginHorizontal: responsiveWidth(2),
+    borderColor: '#E3E3E3',
+    borderWidth: 1,
+    borderRadius: responsiveWidth(1),
   },
   image: {
-    width: 130,
-    height: 140,
-    borderRadius: 20,
+    width: responsiveWidth(30),
+    height: responsiveHeight(18), // Adjust based on your aspect ratio requirements
+    borderRadius: responsiveWidth(5),
   },
   details: {
-    marginLeft: 10,
+    marginLeft: responsiveWidth(4),
     flex: 1,
-    justifyContent: 'space-around',
+    // justifyContent: 'space-between',
   },
   providerName: {
     fontWeight: 'bold',
     color: '#333',
-    fontSize: 18,
-  },
-  location: {
-    color: '#666',
+    fontSize: responsiveFontSize(2),
   },
   dateTimeRow: {
     flexDirection: 'row',
     justifyContent: 'space-between',
-    paddingVertical: 5,
-    paddingHorizontal: 10,
-    borderRadius: 10,
-    marginVertical: 5,
+    paddingVertical: responsiveHeight(0.5),
+    paddingHorizontal: responsiveWidth(2.5),
+    borderRadius: responsiveWidth(1),
+    marginVertical: responsiveHeight(0.5),
     backgroundColor: '#D7D7D7',
+  },
+  locationRow: {
+    flexDirection: 'row',
+    alignItems: 'center',
+  },
+  phoneRow: {
+    flexDirection: 'row',
+    alignItems: 'center',
+    marginTop: responsiveHeight(0.5),
+  },
+  phoneNumber: {
+    marginLeft: responsiveWidth(1),
+    color: '#666',
+  },
+  location: {
+    marginLeft: responsiveWidth(1),
+    color: '#666',
+  },
+  actionButtonContainer: {
+    flexDirection: 'row',
+    alignItems: 'center',
+    // gap: 10,
   },
   button: {
     backgroundColor: '#E3E3E3',
-    // width: 120,
-    paddingVertical: 10,
-    paddingHorizontal: 30,
-    borderRadius: 5,
+    paddingVertical: responsiveHeight(1),
+    paddingHorizontal: responsiveWidth(5),
+    borderRadius: responsiveWidth(1),
+    marginRight: responsiveWidth(2),
   },
   buttonText: {
     textAlign: 'center',
     color: '#5B5B5B',
     fontWeight: 'bold',
+    fontSize: responsiveFontSize(2),
   },
   editIconContainer: {
     // Add styles for the edit icon container if necessary
@@ -129,5 +162,14 @@ const styles = StyleSheet.create({
     flexDirection: 'row',
     justifyContent: 'space-between',
     alignItems: 'center',
+  },
+  completedButton: {
+    backgroundColor: '#9ACC5A',
+  },
+  completedButtontext: {
+    color: '#fff',
+  },
+  disabledButton: {
+    backgroundColor: '#BEBEBE',
   },
 });

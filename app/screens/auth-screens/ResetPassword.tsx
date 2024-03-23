@@ -20,7 +20,13 @@ import SubmitButton from '../../components/submitButton';
 import OtpInput from '../../components/otpInput';
 import {axiosPublic} from '../../utils/axiosConfig';
 import {endpoints} from '../../constants';
-export default ({navigation, route}) => {
+import {AuthStackParamList} from '../../navigations/auth-navigator';
+import {NativeStackScreenProps} from '@react-navigation/native-stack';
+type ResetPasswordScreenProps = NativeStackScreenProps<
+  AuthStackParamList,
+  'ResetPassword'
+>;
+export default ({navigation, route}: ResetPasswordScreenProps) => {
   const {email} = route.params;
   const [currentOtp, setCurrentOtp] = useState('');
   const [password, setPassword] = useState('');

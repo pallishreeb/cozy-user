@@ -65,29 +65,28 @@ const Header: React.FC<HeaderProps> = ({
     <View style={styles.container}>
       <StatusBar backgroundColor={'#FF3131'} barStyle="light-content" />
       <View style={styles.topHeaderContainer}>
+        <View></View>
+        {screenType === 'home' && (
+          <Image
+            source={require('../../assets/header-image.png')}
+            resizeMode={'stretch'}
+            style={styles.headerImage}
+          />
+        )}
         <Icon
           name="logout"
           size={rf(2.5)}
           color={'white'}
           onPress={handleSignOut}
-          style={{alignSelf: 'center'}}
+          style={styles.logoutIcon}
         />
-        {screenType === 'home' && (
-          <Image
-            source={require('../../assets/header-image.png')}
-            resizeMode={'stretch'}
-            style={{
-              width: rw(18),
-              height: rh(4),
-            }}
-          />
-        )}
-        <Icon
+        {/* <Icon
           name="notifications"
           size={rf(2.5)}
           color={'white'}
+          style={{display: 'none'}}
           onPress={handleNavigation}
-        />
+        /> */}
       </View>
       <View style={styles.whiteBar}></View>
       <Text style={styles.headerText}>{label}</Text>
@@ -116,10 +115,19 @@ const styles = StyleSheet.create({
   },
   topHeaderContainer: {
     flexDirection: 'row',
-    justifyContent: 'space-between',
     alignItems: 'center',
     marginBottom: rh(1),
     marginHorizontal: rw(5),
+    justifyContent: 'center',
+  },
+  headerImage: {
+    width: rw(18),
+    height: rh(4),
+    // alignSelf: 'center', // This is redundant due to justifyContent: 'center' in the container.
+  },
+  logoutIcon: {
+    position: 'absolute',
+    right: rw(5), // Position the logout icon to the right.
   },
   whiteBar: {
     backgroundColor: '#FFFFFF',

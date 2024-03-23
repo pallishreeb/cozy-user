@@ -21,7 +21,10 @@ import {endpoints} from '../../constants';
 import AsyncStorage from '@react-native-async-storage/async-storage';
 import {useDispatch} from 'react-redux';
 import {setSignIn} from '../../redux/slices/authSlice';
-export default ({navigation}) => {
+import {AuthStackParamList} from '../../navigations/auth-navigator';
+import {NativeStackScreenProps} from '@react-navigation/native-stack';
+type SignInScreenProps = NativeStackScreenProps<AuthStackParamList, 'SignIn'>;
+export default ({navigation}: SignInScreenProps) => {
   const dispatch = useDispatch();
   const [email, setEmail] = useState('');
   const [password, setPassword] = useState('');

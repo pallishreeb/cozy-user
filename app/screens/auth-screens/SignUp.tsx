@@ -10,7 +10,7 @@ import {
 import {
   responsiveHeight as hp,
   responsiveWidth as wp,
-  responsiveFontSize as fp,
+  // responsiveFontSize as fp,
 } from 'react-native-responsive-dimensions';
 import {KeyboardAwareScrollView} from 'react-native-keyboard-aware-scroll-view';
 import Input from '../../components/input';
@@ -18,7 +18,10 @@ import SubmitButton from '../../components/submitButton';
 
 import {axiosPublic} from '../../utils/axiosConfig';
 import {endpoints} from '../../constants';
-export default ({navigation}) => {
+import {AuthStackParamList} from '../../navigations/auth-navigator';
+import {NativeStackScreenProps} from '@react-navigation/native-stack';
+type SignUpScreenProps = NativeStackScreenProps<AuthStackParamList, 'SignUp'>;
+export default ({navigation}: SignUpScreenProps) => {
   const [name, setName] = useState('');
   const [email, setEmail] = useState('');
   const [password, setPassword] = useState('');
@@ -110,7 +113,7 @@ export default ({navigation}) => {
             }),
         },
       ]);
-    } catch (error) {
+    } catch (error: Error | any) {
       console.log('inside catch', error.response);
       Alert.alert('Information', `Sign Up failed \nPlease try again later`);
     } finally {

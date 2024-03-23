@@ -14,16 +14,14 @@ const ServiceCard: React.FC<ServiceCardProps> = ({
   service,
   handleBookService,
 }) => {
+  const profileImage = service?.profile_pic
+    ? {
+        uri: `${IMAGE_URL}/profile_pic/${service?.profile_pic}`,
+      }
+    : require('../../assets/user-placeholder.png');
   return (
     <View style={styles.card}>
-      <Image
-        source={{
-          uri: service?.profile_pic
-            ? `${IMAGE_URL}/profile_pic/${service?.profile_pic}`
-            : 'https://via.placeholder.com/150',
-        }}
-        style={styles.image}
-      />
+      <Image source={profileImage} style={styles.image} />
       <View style={styles.details}>
         <Text style={styles.providerName}>{service.name}</Text>
         <Text style={styles.location}>
@@ -57,8 +55,8 @@ const styles = StyleSheet.create({
     borderRadius: 10,
   },
   image: {
-    width: 130,
-    height: 100,
+    width: 120,
+    height: 120,
     borderRadius: 20,
   },
   details: {

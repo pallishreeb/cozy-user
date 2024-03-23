@@ -9,17 +9,19 @@ import {
   ScrollView,
 } from 'react-native';
 import {
-  responsiveHeight as hp,
-  responsiveWidth as wp,
-  responsiveFontSize as fp,
+  responsiveHeight as rh,
+  responsiveWidth as rw,
+  responsiveFontSize as rf,
 } from 'react-native-responsive-dimensions';
 import Header from '../../components/homeHeader';
 import ServiceCard from '../../components/serviceCard';
 import useProfileData from '../../hooks/useProfileData';
 import Loader from '../../components/loader';
 import {useSearchProviders} from '../../hooks/useSearchProviders';
-
-const NearMe = ({navigation}) => {
+import {BottomTabScreenProps} from '@react-navigation/bottom-tabs';
+import {BottomTabParamList} from '../../navigations/bottom-navigator';
+type NearMeScreenProps = BottomTabScreenProps<BottomTabParamList, 'NearMe'>;
+const NearMe = ({navigation}: NearMeScreenProps) => {
   const {
     profileData,
     isLoading: profileLoading,
@@ -38,12 +40,7 @@ const NearMe = ({navigation}) => {
       fetchProviders({zipcode: profileData.zipcode});
     }
   }, [profileData, manualSearchInitiated]);
-  if (profileLoading || loading) {
-    return <Loader />;
-  }
-  if (profileError || error) {
-    return <Text>{profileError || error?.message}</Text>;
-  }
+
   const renderHeader = () => (
     <Text style={styles.headerText2}>Near You ({providers.length})</Text>
   );
@@ -52,60 +49,60 @@ const NearMe = ({navigation}) => {
     setSearchZipcode(zipcode); // Update the searchZipcode to trigger the search
     fetchProviders({zipcode});
   };
+  const getContent = () => {
+    if (profileLoading || loading) {
+      return <Loader />;
+    }
+    if (profileError || error) {
+      return (
+        <Text style={styles.errorText}>
+          {profileError || error?.message || 'An unexpected error occured'}
+        </Text>
+      );
+    }
+    if (providers.length === 0) {
+      return (
+        <View style={styles.noResultsContainer}>
+          <Image
+            source={require('../../assets/no-result-2.png')}
+            style={styles.noResultsImage}
+          />
+        </View>
+      );
+    }
+    return (
+      <FlatList
+        data={providers}
+        renderItem={({item}) => (
+          <ServiceCard
+            service={item}
+            handleBookService={() =>
+              navigation.navigate('ServiceDetails', {providerId: item?.id})
+            }
+          />
+        )}
+        keyExtractor={item => item.id.toString()}
+        ListHeaderComponent={renderHeader}
+        // Add padding at the bottom to ensure nothing is cut off
+        contentContainerStyle={styles.flatListContentContainer}
+      />
+    );
+  };
   return (
     <SafeAreaView style={styles.container}>
-      {providers.length === 0 ? (
-        <ScrollView>
-          <Header
-            handleSearch={text => {
-              setZipcode(text as string);
-            }}
-            onPressSearch={searchResults}
-            handleNavigation={() => {
-              navigation.navigate('Notification');
-            }}
-            screenType="nearMe"
-            label="Your location"
-            placeholder="Enter Your Pin/Zip Code"
-          />
-          <View style={styles.serviceImageConatiner}>
-            <Image
-              style={styles.serviceImage}
-              source={require('../../assets/not-found.png')}
-            />
-          </View>
-        </ScrollView>
-      ) : (
-        <>
-          <Header
-            handleSearch={text => {
-              setZipcode(text as string);
-            }}
-            onPressSearch={searchResults}
-            handleNavigation={() => {
-              navigation.navigate('Notification');
-            }}
-            screenType="nearMe"
-            label="Your location"
-            placeholder="Enter Your Pin/Zip Code"
-          />
-          <FlatList
-            data={providers}
-            renderItem={({item}) => (
-              <ServiceCard
-                service={item}
-                handleBookService={() =>
-                  navigation.navigate('ServiceDetails', {providerId: item?.id})
-                }
-              />
-            )}
-            keyExtractor={item => item.id.toString()}
-            ListHeaderComponent={renderHeader}
-            // Add padding at the bottom to ensure nothing is cut off
-            contentContainerStyle={styles.flatListContentContainer}
-          />
-        </>
-      )}
+      <Header
+        handleSearch={text => {
+          setZipcode(text as string);
+        }}
+        onPressSearch={searchResults}
+        handleNavigation={() => {
+          navigation.navigate('Notification');
+        }}
+        screenType="nearMe"
+        label="Your location"
+        placeholder="Enter Your Pin/Zip Code"
+      />
+      {getContent()}
     </SafeAreaView>
   );
 };
@@ -117,20 +114,20 @@ const styles = StyleSheet.create({
     flex: 1,
   },
   scrollViewContainer: {
-    paddingTop: hp(2),
-    paddingBottom: hp(4),
+    paddingTop: rh(2),
+    paddingBottom: rh(4),
   },
   flatListContentContainer: {
-    paddingBottom: hp(4),
+    paddingBottom: rh(4),
   },
 
   headerText2: {
-    fontSize: fp(1.7),
+    fontSize: rf(1.7),
     textTransform: 'uppercase',
     color: '#333',
     fontWeight: 'bold',
-    marginLeft: wp(5),
-    marginVertical: hp(0.5),
+    marginLeft: rw(5),
+    marginVertical: rh(0.5),
   },
   serviceImageConatiner: {
     flex: 1, // Takes up all available space below the header
@@ -138,7 +135,25 @@ const styles = StyleSheet.create({
     alignItems: 'center',
   },
   serviceImage: {
-    height: hp(60),
-    width: wp(90),
+    height: rh(60),
+    width: rw(90),
+  },
+  noResultsContainer: {
+    flex: 1,
+    justifyContent: 'space-evenly',
+    alignItems: 'center',
+    // paddingHorizontal: rw(10),
+  },
+  noResultsImage: {
+    width: rw(90),
+    height: rh(40),
+    resizeMode: 'contain',
+  },
+
+  errorText: {
+    fontSize: rf(2),
+    color: 'red',
+    textAlign: 'center',
+    marginTop: rh(20),
   },
 });

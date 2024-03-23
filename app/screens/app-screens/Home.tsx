@@ -18,7 +18,11 @@ import CategoryCard from '../../components/categoryCard';
 import useCategories, {Category, Service} from '../../hooks/useCategories';
 import Loader from '../../components/loader';
 import {IMAGE_URL} from '../../constants';
-export default ({navigation}) => {
+import {BottomTabScreenProps} from '@react-navigation/bottom-tabs';
+import {BottomTabParamList} from '../../navigations/bottom-navigator';
+
+type HomeScreenProps = BottomTabScreenProps<BottomTabParamList, 'Home'>;
+export default ({navigation}: HomeScreenProps) => {
   const {categories, isLoading, error} = useCategories();
   const [keyword, setKeyword] = useState<string | undefined>('');
   let handleNavigation = () => {
@@ -104,7 +108,6 @@ export default ({navigation}) => {
         </LinearGradient>
       );
     } else {
-      // Use a regular View when no gradient is needed
       return renderContent();
     }
   };
@@ -120,30 +123,36 @@ export default ({navigation}) => {
           navigation.navigate('SearchResult', {keyword});
         }}
       />
-      <ScrollView
-        style={{
-          flex: 1,
-          backgroundColor: '#FFFFFF',
-        }}>
-        <View style={styles.categoryHeaderContainer}>
-          <Text style={[styles.categoryTitle]}>{'Top Categories'}</Text>
-        </View>
-        <View style={styles.categoryHeaderContainer}>
-          <FlatList
-            data={categories}
-            renderItem={renderTopCategory}
-            keyExtractor={category => `${category.id}`}
-            horizontal
-            showsHorizontalScrollIndicator={false}
-          />
-        </View>
-        {categories?.length > 0 &&
-          categories.map((category, index) => (
-            <React.Fragment key={category.id}>
-              {renderCategoryServices({item: category, index})}
-            </React.Fragment>
-          ))}
-      </ScrollView>
+      {isLoading ? (
+        <Loader />
+      ) : error ? (
+        <Text style={styles.errorText}>{error.message}</Text>
+      ) : (
+        <ScrollView
+          style={{
+            flex: 1,
+            backgroundColor: '#FFFFFF',
+          }}>
+          <View style={styles.categoryHeaderContainer}>
+            <Text style={[styles.categoryTitle]}>{'Top Categories'}</Text>
+          </View>
+          <View style={styles.categoryHeaderContainer}>
+            <FlatList
+              data={categories}
+              renderItem={renderTopCategory}
+              keyExtractor={category => `${category.id}`}
+              horizontal
+              showsHorizontalScrollIndicator={false}
+            />
+          </View>
+          {categories?.length > 0 &&
+            categories.map((category, index) => (
+              <React.Fragment key={category.id}>
+                {renderCategoryServices({item: category, index})}
+              </React.Fragment>
+            ))}
+        </ScrollView>
+      )}
     </SafeAreaView>
   );
 };
@@ -156,24 +165,30 @@ const styles = StyleSheet.create({
     flexDirection: 'row',
     justifyContent: 'space-between',
     alignItems: 'center',
-    marginBottom: rh(1.5), // Converted marginBottom to responsive height
-    marginHorizontal: rw(5), // Converted marginHorizontal to responsive width
-    // paddingHorizontal: rw(3), // You can uncomment this if needed
+    marginBottom: rh(1.5),
+    marginHorizontal: rw(5),
+    // paddingHorizontal: rw(3),
     // paddingRight: rf(2),
   },
   categoryImage: {
-    borderRadius: rw(5.5), // Converted width and height to responsive dimensions
-    width: rw(30), // Adjusted width based on responsive width
-    height: rh(10), // Adjusted height based on responsive height
+    borderRadius: rw(5.5),
+    width: rw(30),
+    height: rh(10),
   },
   linearGradientStyle: {
-    paddingTop: rh(0.5), // Converted paddingTop to responsive height
-    paddingBottom: rh(0.5), // Converted paddingBottom to responsive height
+    paddingTop: rh(0.5),
+    paddingBottom: rh(0.5),
   },
   categoryTitle: {
     fontWeight: 'bold',
     color: '#6D5C38',
-    fontSize: rf(2.5), // Converted fontSize to responsive font size
+    fontSize: rf(2.5),
     textTransform: 'uppercase',
+  },
+  errorText: {
+    fontSize: rf(2),
+    color: 'red',
+    textAlign: 'center',
+    marginTop: rh(20),
   },
 });

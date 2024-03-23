@@ -5,7 +5,6 @@ import {
   Text,
   Image,
   TouchableOpacity,
-  ImageSourcePropType,
   ScrollView,
   FlatList,
 } from 'react-native';
@@ -20,7 +19,14 @@ import CustomHeader from '../../components/customHeader';
 import {useProviderDetails} from '../../hooks/useProviderDetails';
 import Loader from '../../components/loader';
 import {IMAGE_URL} from '../../constants';
-const ServiceDetails = ({navigation, route}) => {
+import {WorkingHours} from '../../components/workingHours';
+import {NativeStackScreenProps} from '@react-navigation/native-stack';
+import {AppStackParamList} from '../../navigations/app-navigator';
+type ServiceDetailsScreenProps = NativeStackScreenProps<
+  AppStackParamList,
+  'ServiceDetails'
+>;
+const ServiceDetails = ({navigation, route}: ServiceDetailsScreenProps) => {
   const {providerId} = route.params;
   const {provider, loading, error} = useProviderDetails(providerId);
   // console.log(provider, 'provider details');
@@ -30,29 +36,75 @@ const ServiceDetails = ({navigation, route}) => {
   if (error) {
     return <Text>{error.message}</Text>;
   }
-
-  const fullAddress = `${provider?.address || ''}, ${provider?.city}, ${
+  const calculateDiscountedPrice = (
+    rate: number,
+    discountPercentage: number,
+  ) => {
+    if (!rate || !discountPercentage) return rate;
+    const discountFraction = discountPercentage / 100;
+    const discountAmount = rate * discountFraction;
+    const discountedPrice = rate - discountAmount;
+    return discountedPrice.toFixed(2); // Keeping two decimal places for currency format
+  };
+  const parseWorkingHours = (workingHoursStr: string) => {
+    try {
+      const onceParsed = JSON.parse(workingHoursStr);
+      const twiceParsed = JSON.parse(onceParsed);
+      const thriceParsed = JSON.parse(twiceParsed);
+      return thriceParsed;
+    } catch (error) {
+      console.error('Error parsing working hours:', error);
+      return [];
+    }
+  };
+  const originalRate = provider?.rate ? parseFloat(provider.rate) : 0;
+  const discountPercentage = provider?.service?.category?.discount
+    ? parseFloat(provider.service.category.discount)
+    : 0;
+  const discountedRate = calculateDiscountedPrice(
+    originalRate,
+    discountPercentage,
+  );
+  const fullAddress = `${provider?.address || ''} ${provider?.city} ${
     provider?.state
-  }, ${provider?.country}, ${provider?.zipcode}`;
+  }  ${provider?.country}  ${provider?.zipcode}`;
   const serviceName = provider?.service?.name || 'N/A';
   const categoryName = provider?.service?.category?.name || 'N/A';
   const providerProfilePic = provider?.profile_pic
-    ? `${IMAGE_URL}/profile_pic/${provider?.profile_pic}`
-    : 'https://via.placeholder.com/150';
+    ? {uri: `${IMAGE_URL}/profile_pic/${provider?.profile_pic}`}
+    : require('../../assets/user-placeholder.png');
   const serviceImages = provider?.service?.images;
+  const workingHours = provider?.working_hours
+    ? parseWorkingHours(provider.working_hours)
+    : [];
+
+  const rateValue = (
+    <View style={{flexDirection: 'row', alignItems: 'center'}}>
+      {discountPercentage > 0 ? (
+        <>
+          <Text style={{textDecorationLine: 'line-through', marginRight: 4}}>
+            ${originalRate}
+          </Text>
+          <Text style={{fontWeight: 'bold', marginRight: 4}}>
+            ${discountedRate}
+          </Text>
+          <Text>({discountPercentage}% off)</Text>
+        </>
+      ) : (
+        <Text>${originalRate}</Text>
+      )}
+    </View>
+  );
   return (
     <SafeAreaView style={styles.container}>
       <CustomHeader
-        isNotification={true}
+        isNotification={false}
         onBackPress={() => navigation.goBack()}
         onNotificationPress={() => navigation.navigate('Notification')}
       />
       <ScrollView style={styles.scrollView}>
         <View style={styles.detailsContainer}>
-          <Image
-            source={{uri: providerProfilePic}}
-            style={styles.serviceImage}
-          />
+          <Image source={providerProfilePic} style={styles.serviceImage} />
           <View style={styles.infoContainer}>
             <Text style={styles.name}>{provider?.name}</Text>
             <Text style={styles.address}>{fullAddress}</Text>
@@ -69,20 +121,18 @@ const ServiceDetails = ({navigation, route}) => {
                 <Icon name="calendar-clock-outline" size={24} color={'white'} />
                 <Text style={styles.buttonText}>Book Service</Text>
               </TouchableOpacity>
-              <TouchableOpacity
+              {/* <TouchableOpacity
                 style={[styles.button, styles.chatButton]}
-                // onPress={() => {
-                //   navigation.navigate('Chat');
-                // }}
-              >
+                onPress={() => {
+                  // navigation.navigate('Chat');
+                }}>
                 <Icon name="android-messages" size={24} color={'white'} />
                 <Text style={styles.buttonText}>Chat</Text>
-              </TouchableOpacity>
+              </TouchableOpacity> */}
             </View>
           </View>
         </View>
         <View style={styles.simpleDottedLine} />
-        {/* Enhanced Additional Details */}
         <View style={styles.additionalDetails}>
           <DetailCard
             icon="briefcase-outline"
@@ -91,11 +141,7 @@ const ServiceDetails = ({navigation, route}) => {
               provider?.experience ? `${provider?.experience} years` : 'N/A'
             }
           />
-          <DetailCard
-            icon="cash"
-            title="Rate"
-            value={provider?.rate ? `$${provider?.rate}` : 'N/A'}
-          />
+          <DetailCard icon="cash" title="Rate" value={rateValue} />
           <DetailCard
             icon="format-list-bulleted"
             title="Service"
@@ -106,6 +152,15 @@ const ServiceDetails = ({navigation, route}) => {
             title="Category"
             value={categoryName || 'N/A'}
           />
+          <DetailCard
+            icon="briefcase-outline"
+            title="Current Availability"
+            value={
+              provider?.business_hours_enabled === 1
+                ? 'Available'
+                : 'Not Available'
+            }
+          />
           {provider?.specialization && (
             <>
               <SubHeading text="Specialization" />
@@ -114,15 +169,13 @@ const ServiceDetails = ({navigation, route}) => {
               </Text>
             </>
           )}
-
           {provider?.skills && (
             <>
               <SubHeading text="Skills" />
-              {provider?.skills.split(',').map((skill, index) => (
-                <ListItem key={index} text={skill.trim()} />
-              ))}
+              <Text style={styles.cardValue}>{provider?.skills! || 'N/A'}</Text>
             </>
           )}
+          {serviceImages && <SubHeading text="Service Images" />}
           <FlatList
             data={serviceImages}
             renderItem={({item}) => (
@@ -135,6 +188,9 @@ const ServiceDetails = ({navigation, route}) => {
             horizontal={true}
             showsHorizontalScrollIndicator={false}
           />
+
+          {workingHours?.length > 0 && <SubHeading text="Working Hours" />}
+          <WorkingHours days={workingHours} />
         </View>
       </ScrollView>
     </SafeAreaView>
@@ -142,16 +198,21 @@ const ServiceDetails = ({navigation, route}) => {
 };
 
 // Component for rendering detail cards
-const DetailCard: React.FC<{icon: string; title: string; value: string}> = ({
-  icon,
-  title,
-  value,
-}) => (
+const DetailCard: React.FC<{
+  icon: string;
+  title: string;
+  value: string | React.ReactNode;
+}> = ({icon, title, value}) => (
   <View style={styles.detailCard}>
     <Icon name={icon} size={24} style={styles.cardIcon} />
     <View style={styles.cardTextContainer}>
       <Text style={styles.cardTitle}>{title}</Text>
-      <Text style={styles.cardValue}>{value}</Text>
+      {/* This part must support rendering `value` as a component */}
+      {typeof value === 'string' ? (
+        <Text style={styles.cardValue}>{value}</Text>
+      ) : (
+        value
+      )}
     </View>
   </View>
 );
@@ -159,14 +220,6 @@ const DetailCard: React.FC<{icon: string; title: string; value: string}> = ({
 // Component for subheadings
 const SubHeading: React.FC<{text: string}> = ({text}) => (
   <Text style={styles.subHeading}>{text}</Text>
-);
-
-// Component for list items
-const ListItem: React.FC<{text: string}> = ({text}) => (
-  <View style={styles.listItem}>
-    <Icon name="chevron-right" size={20} style={styles.listIcon} />
-    <Text style={styles.listText}>{text}</Text>
-  </View>
 );
 
 export default ServiceDetails;
