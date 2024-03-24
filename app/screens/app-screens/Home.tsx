@@ -120,13 +120,16 @@ export default ({navigation}: HomeScreenProps) => {
           setKeyword(text);
         }}
         onPressSearch={() => {
+          setKeyword('');
           navigation.navigate('SearchResult', {keyword});
         }}
       />
       {isLoading ? (
         <Loader />
       ) : error ? (
-        <Text style={styles.errorText}>{error.message}</Text>
+        <Text style={styles.errorText}>
+          {error.message || 'An error occurred.'}
+        </Text>
       ) : (
         <ScrollView
           style={{

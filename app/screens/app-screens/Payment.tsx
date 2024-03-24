@@ -1,8 +1,10 @@
 import {SafeAreaView, StyleSheet, Text, View} from 'react-native';
 import React from 'react';
 import CustomHeader from '../../components/customHeader';
-
-const Payment = ({navigation}) => {
+import {NativeStackScreenProps} from '@react-navigation/native-stack';
+import {AppStackParamList} from '../../navigations/app-navigator';
+type PaymentScreenProps = NativeStackScreenProps<AppStackParamList, 'Payment'>;
+const Payment = ({navigation}: PaymentScreenProps) => {
   return (
     <SafeAreaView style={styles.container}>
       <CustomHeader

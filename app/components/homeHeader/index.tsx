@@ -118,6 +118,7 @@ const styles = StyleSheet.create({
     alignItems: 'center',
     marginBottom: rh(1),
     marginHorizontal: rw(5),
+    paddingVertical: rh(0.75),
     justifyContent: 'center',
   },
   headerImage: {

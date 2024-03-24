@@ -108,6 +108,9 @@ const BookService = ({navigation, route}: BookServiceScreenProps) => {
           'Error',
           'Something went wrong while processing your request.',
         );
+        setAddress('');
+        setDate(new Date());
+        setPhone('');
       }
       // console.log(response.data, 'Booking Service response');
     } catch (error) {

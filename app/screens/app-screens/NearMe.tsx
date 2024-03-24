@@ -31,7 +31,7 @@ const NearMe = ({navigation}: NearMeScreenProps) => {
   const [searchZipcode, setSearchZipcode] = useState('');
   const [manualSearchInitiated, setManualSearchInitiated] = useState(false);
 
-  const {providers, loading, error, fetchProviders} = useSearchProviders(); // Adjusted to include a fetch method
+  const {providers, loading, error, fetchProviders} = useSearchProviders();
 
   useEffect(() => {
     // If there's profile data and no manual search has been initiated, use the profile's zipcode

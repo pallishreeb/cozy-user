@@ -235,7 +235,7 @@ const styles = StyleSheet.create({
     justifyContent: 'space-between',
   },
   halfInput: {
-    width: '100%', // Adjusting for margin/padding might require a slight reduction in width
+    width: '100%',
   },
   label: {
     fontSize: rf(2),

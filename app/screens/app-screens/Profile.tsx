@@ -15,12 +15,7 @@ import {BottomTabScreenProps} from '@react-navigation/bottom-tabs';
 type ProfileScreenProps = BottomTabScreenProps<BottomTabParamList, 'Profile'>;
 const Profile = ({navigation}: ProfileScreenProps) => {
   const {profileData, isLoading, error, updateProfileData} = useProfileData();
-  if (isLoading) {
-    return <Loader />;
-  }
-  if (error) {
-    return <Text>{error || 'Something Went Wrong!'} </Text>;
-  }
+
   return (
     <SafeAreaView style={styles.container}>
       <CustomHeader

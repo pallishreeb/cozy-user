@@ -184,9 +184,9 @@ const styles = StyleSheet.create({
     color: '#84868A',
     marginBottom: 30,
     marginHorizontal: 25,
-    fontSize: 18, // Adjust for smaller text
-    fontWeight: 'normal', // Or specify the desired weight
-    textTransform: 'none', // Default, but explicitly stated for clarity
+    fontSize: 18,
+    fontWeight: 'normal',
+    textTransform: 'none',
   },
   fieldContainer: {
     marginTop: 20,
@@ -214,27 +214,6 @@ const styles = StyleSheet.create({
   submitButtonConatiner: {
     marginBottom: hp(4),
     marginTop: hp(4),
-  },
-  oauthButton: {
-    flexDirection: 'row',
-    justifyContent: 'center',
-    alignItems: 'center',
-    backgroundColor: '#FDFDFD',
-    borderColor: '#D0D0D0',
-    borderRadius: 5,
-    borderWidth: 1,
-    paddingVertical: 16,
-    marginBottom: 18,
-    marginHorizontal: 25,
-  },
-  oauthButtonText: {
-    color: '#595959',
-    fontSize: 16,
-  },
-  oauthLogo: {
-    width: 20,
-    height: 20,
-    marginRight: 12,
   },
   footer: {
     marginTop: 'auto', // Pushes the footer to the bottom

@@ -25,11 +25,9 @@ const ProfileInput = ({
 }: Props): JSX.Element => {
   const [isFocused, setIsFocused] = useState(false);
 
-  // Determine whether to show the placeholder
   const showPlaceholder = !isFocused && !value;
 
   useEffect(() => {
-    // If there's a value, ensure placeholder is not shown
     if (value) setIsFocused(true);
   }, [value]);
 
@@ -61,10 +59,10 @@ const styles = StyleSheet.create({
     marginBottom: rh(1),
     borderRadius: rw(1.2),
     width: '100%',
-    textAlignVertical: 'top', // Ensures text starts from top
+    textAlignVertical: 'top',
   },
   multilineInput: {
-    paddingTop: rw(2.5), // Adjust padding for multiline
+    paddingTop: rw(2.5),
   },
   label: {
     fontSize: rf(2),

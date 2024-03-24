@@ -1,4 +1,4 @@
-import {Image, StyleSheet, Text, TouchableOpacity, View} from 'react-native';
+import {Image, StyleSheet, Text, TouchableOpacity} from 'react-native';
 import {
   responsiveWidth as rw,
   responsiveHeight as rh,
@@ -36,27 +36,23 @@ const styles = StyleSheet.create({
     paddingRight: rf(2),
   },
   categoryImage: {
-    borderRadius: 14, // Converted borderRadius to responsive width
-    width: rw(30), // Adjusted width based on responsive width
-    height: rh(10), // Adjusted height based on responsive height
+    borderRadius: 14,
+    width: rw(30),
+    height: rh(10),
   },
   categoryLabel: {
     color: '#4B4B4B',
-    fontSize: rf(1.5), // Converted fontSize to responsive font size
-    marginRight: rw(1), // Converted marginRight to responsive width
+    fontSize: rf(1.5),
+    marginRight: rw(1),
     flex: 1,
   },
   longCategoryLabel: {
     color: '#4B4B4B',
     fontSize: 12,
-    // Add any styles specific to long labels here
   },
   shortCategoryLabel: {
     color: '#4B4B4B',
     fontSize: 12,
-    // Add any styles specific to short labels here
   },
-  categoryLabelContainer: {
-    // Add any container styles here
-  },
+  categoryLabelContainer: {},
 });

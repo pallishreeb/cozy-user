@@ -7,6 +7,12 @@ import {
   View,
 } from 'react-native';
 import React, {useEffect} from 'react';
+import {
+  responsiveWidth,
+  responsiveHeight,
+  responsiveFontSize,
+} from 'react-native-responsive-dimensions';
+
 import CustomHeader from '../../components/customHeader';
 import {AppStackParamList} from '../../navigations/app-navigator';
 import {NativeStackScreenProps} from '@react-navigation/native-stack';
@@ -17,8 +23,8 @@ type ThankYouScreenProps = NativeStackScreenProps<
 const ThankYou = ({navigation}: ThankYouScreenProps) => {
   useEffect(() => {
     const timer = setTimeout(() => {
-      navigation.navigate('MyTabs', {screen: 'Home'}); // Adjust this to your home page route
-    }, 5000); // Redirect after 5 seconds
+      navigation.navigate('MyTabs', {screen: 'Home'});
+    }, 5000);
 
     return () => clearTimeout(timer);
   }, [navigation]);
@@ -33,7 +39,7 @@ const ThankYou = ({navigation}: ThankYouScreenProps) => {
       <View style={styles.thankYouContainer}>
         <View style={styles.content}>
           <Image
-            source={require('../../assets/thank-you.png')} // Update the path to your Thank You image
+            source={require('../../assets/thank-you.png')}
             style={styles.image}
           />
           <Text style={styles.successText}>Your Booking was Successful</Text>
@@ -42,7 +48,6 @@ const ThankYou = ({navigation}: ThankYouScreenProps) => {
             onPress={() =>
               navigation.navigate('MyTabs', {screen: 'Appointment'})
             }>
-            {/* Update this to your My Bookings route */}
             You will be redirected to the home page shortly or{' '}
             <Text style={styles.clickHereText}>click here</Text> to go to My
             Bookings.
@@ -50,7 +55,6 @@ const ThankYou = ({navigation}: ThankYouScreenProps) => {
           <TouchableOpacity
             style={styles.button}
             onPress={() => navigation.navigate('MyTabs', {screen: 'Home'})}>
-            {/* Adjust this to your home page route */}
             <Text style={styles.buttonText}>Go To Home</Text>
           </TouchableOpacity>
         </View>
@@ -68,36 +72,36 @@ const styles = StyleSheet.create({
   thankYouContainer: {flex: 1, justifyContent: 'center', alignItems: 'center'},
   content: {
     alignItems: 'center',
-    paddingHorizontal: 20,
+    paddingHorizontal: responsiveWidth(5),
   },
   image: {
-    width: 200, // Adjust according to your image's size
-    height: 200, // Adjust according to your image's size
-    marginBottom: 20,
+    width: responsiveWidth(50),
+    height: responsiveHeight(25),
+    marginBottom: responsiveHeight(2.5),
   },
   successText: {
-    fontSize: 20,
+    fontSize: responsiveFontSize(2.5),
     fontWeight: 'bold',
     textAlign: 'center',
-    marginBottom: 10,
+    marginBottom: responsiveHeight(1.25),
   },
   redirectText: {
-    fontSize: 16,
+    fontSize: responsiveFontSize(2),
     textAlign: 'center',
-    marginBottom: 20,
+    marginBottom: responsiveHeight(2.5),
   },
   clickHereText: {
     fontWeight: 'bold',
     textDecorationLine: 'underline',
   },
   button: {
-    backgroundColor: '#007BFF', // Use your app's theme color
-    padding: 15,
-    borderRadius: 5,
+    backgroundColor: '#007BFF',
+    padding: responsiveHeight(1.875),
+    borderRadius: responsiveWidth(1.25),
   },
   buttonText: {
     color: '#FFFFFF',
-    fontSize: 16,
+    fontSize: responsiveFontSize(2),
     fontWeight: 'bold',
   },
 });

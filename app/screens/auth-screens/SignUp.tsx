@@ -8,9 +8,9 @@ import {
   Alert,
 } from 'react-native';
 import {
-  responsiveHeight as hp,
-  responsiveWidth as wp,
-  // responsiveFontSize as fp,
+  responsiveHeight as rh,
+  responsiveWidth as rw,
+  responsiveFontSize as rf,
 } from 'react-native-responsive-dimensions';
 import {KeyboardAwareScrollView} from 'react-native-keyboard-aware-scroll-view';
 import Input from '../../components/input';
@@ -214,81 +214,51 @@ const styles = StyleSheet.create({
     backgroundColor: '#FFFFFF',
     borderBottomRightRadius: 80,
     borderBottomLeftRadius: 80,
-    paddingTop: hp(4),
-    paddingBottom: hp(4),
-    // marginBottom: 30,
-    height: hp(90),
+    paddingTop: rh(3),
+    paddingBottom: rh(4),
+    height: rh(90),
   },
 
   headingText1: {
-    fontSize: 25,
-    marginBottom: 8,
-    marginHorizontal: 26,
+    fontSize: rf(3.5),
+    marginBottom: rh(1),
+    marginHorizontal: rw(8),
     fontWeight: 'bold',
     textTransform: 'uppercase',
     color: '#FF3131',
   },
   headingText2: {
     color: '#84868A',
-    marginBottom: 30,
-    marginHorizontal: 25,
-    fontSize: 18, // Adjust for smaller text
-    fontWeight: 'normal', // Or specify the desired weight
-    textTransform: 'none', // Default, but explicitly stated for clarity
+    marginBottom: rh(3),
+    marginHorizontal: rw(6),
+    fontSize: rf(2),
+    fontWeight: 'normal',
+    textTransform: 'none',
   },
   fieldContainer: {
-    marginTop: 20,
-    marginHorizontal: wp(6),
+    marginTop: rh(1.5),
+    marginHorizontal: rw(6),
   },
   label: {
     color: '#5B5B5B',
-    fontSize: 14,
-    marginBottom: 5,
-    marginHorizontal: 10,
+    fontSize: rf(1.8),
+    marginBottom: rh(1),
+    marginHorizontal: rw(2),
   },
   errorMSg: {
     color: 'red',
-    fontSize: 14,
-    // marginBottom: 8,
+    fontSize: rf(1.8),
   },
-  forgotPasswordContainer: {
-    marginVertical: 20,
-    alignItems: 'flex-end',
-  },
-  forgotPasswordText: {
-    color: '#FF3131',
-    textDecorationLine: 'none',
-  },
+
   submitButtonConatiner: {
-    marginBottom: hp(4),
-    marginTop: hp(4),
-  },
-  oauthButton: {
-    flexDirection: 'row',
-    justifyContent: 'center',
-    alignItems: 'center',
-    backgroundColor: '#FDFDFD',
-    borderColor: '#D0D0D0',
-    borderRadius: 5,
-    borderWidth: 1,
-    paddingVertical: 16,
-    marginBottom: 18,
-    marginHorizontal: 25,
-  },
-  oauthButtonText: {
-    color: '#595959',
-    fontSize: 16,
-  },
-  oauthLogo: {
-    width: 20,
-    height: 20,
-    marginRight: 12,
+    marginBottom: rh(4),
+    marginTop: rh(4),
   },
   footer: {
-    marginTop: 'auto', // Pushes the footer to the bottom
-    paddingTop: 20, // Adjust based on your design
-    paddingBottom: 20, // Adjust based on your design
-    paddingHorizontal: 20,
+    marginTop: 'auto',
+    paddingTop: rh(2),
+    paddingBottom: rh(2),
+    paddingHorizontal: rw(4),
     alignItems: 'center',
   },
   footerText: {

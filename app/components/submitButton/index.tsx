@@ -1,9 +1,9 @@
 import {StyleSheet, Text, TouchableOpacity} from 'react-native';
 import React from 'react';
 import {
-  responsiveHeight as hp,
-  responsiveWidth as wp,
-  responsiveFontSize as fp,
+  responsiveHeight as rh,
+  responsiveWidth as rw,
+  responsiveFontSize as rf,
 } from 'react-native-responsive-dimensions';
 export default ({onPress = () => {}, title = '', disabled = false}) => {
   return (
@@ -20,21 +20,21 @@ const styles = StyleSheet.create({
   submitButton: {
     alignItems: 'center',
     backgroundColor: '#FF3131',
-    borderRadius: 5,
-    padding: 15,
-    marginHorizontal: wp(6),
+    borderRadius: rw(1.25),
+    padding: rw(4),
+    marginHorizontal: rw(6),
     shadowColor: '#FF31311A',
     shadowOpacity: 0.1,
     shadowOffset: {
       width: 0,
-      height: 4,
+      height: rh(0.5),
     },
-    shadowRadius: 4,
+    shadowRadius: rw(1),
     elevation: 4,
   },
   submmitButtonText: {
     color: '#FFFFFF',
-    fontSize: 18,
+    fontSize: rf(2.25),
     fontWeight: 'bold',
   },
 });

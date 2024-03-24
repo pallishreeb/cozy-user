@@ -14,11 +14,12 @@ import {
   responsiveFontSize,
 } from 'react-native-responsive-dimensions';
 import Icon from 'react-native-vector-icons/MaterialCommunityIcons';
+import Icon2 from 'react-native-vector-icons/MaterialIcons';
 import React from 'react';
 import CustomHeader from '../../components/customHeader';
 import {useProviderDetails} from '../../hooks/useProviderDetails';
 import Loader from '../../components/loader';
-import {IMAGE_URL} from '../../constants';
+import {IMAGE_URL, experience} from '../../constants';
 import {WorkingHours} from '../../components/workingHours';
 import {NativeStackScreenProps} from '@react-navigation/native-stack';
 import {AppStackParamList} from '../../navigations/app-navigator';
@@ -29,13 +30,6 @@ type ServiceDetailsScreenProps = NativeStackScreenProps<
 const ServiceDetails = ({navigation, route}: ServiceDetailsScreenProps) => {
   const {providerId} = route.params;
   const {provider, loading, error} = useProviderDetails(providerId);
-  // console.log(provider, 'provider details');
-  if (loading) {
-    return <Loader />;
-  }
-  if (error) {
-    return <Text>{error.message}</Text>;
-  }
   const calculateDiscountedPrice = (
     rate: number,
     discountPercentage: number,
@@ -44,7 +38,7 @@ const ServiceDetails = ({navigation, route}: ServiceDetailsScreenProps) => {
     const discountFraction = discountPercentage / 100;
     const discountAmount = rate * discountFraction;
     const discountedPrice = rate - discountAmount;
-    return discountedPrice.toFixed(2); // Keeping two decimal places for currency format
+    return discountedPrice.toFixed(2);
   };
   const parseWorkingHours = (workingHoursStr: string) => {
     try {
@@ -102,26 +96,46 @@ const ServiceDetails = ({navigation, route}: ServiceDetailsScreenProps) => {
         onBackPress={() => navigation.goBack()}
         onNotificationPress={() => navigation.navigate('Notification')}
       />
-      <ScrollView style={styles.scrollView}>
-        <View style={styles.detailsContainer}>
-          <Image source={providerProfilePic} style={styles.serviceImage} />
-          <View style={styles.infoContainer}>
-            <Text style={styles.name}>{provider?.name}</Text>
-            <Text style={styles.address}>{fullAddress}</Text>
-            <Text style={styles.phone}>{provider?.mobile_number}</Text>
-            <View style={styles.buttonsContainer}>
-              <TouchableOpacity
-                style={styles.button}
-                onPress={() => {
-                  navigation.navigate('BookService', {
-                    providerId,
-                    serviceId: provider?.service_id,
-                  });
-                }}>
-                <Icon name="calendar-clock-outline" size={24} color={'white'} />
-                <Text style={styles.buttonText}>Book Service</Text>
-              </TouchableOpacity>
-              {/* <TouchableOpacity
+      {loading ? (
+        <Loader />
+      ) : error ? (
+        <Text style={styles.errorText}>
+          {error.message || 'An Unexpected Error  Occurred'}
+        </Text>
+      ) : (
+        <ScrollView style={styles.scrollView}>
+          <View style={styles.detailsContainer}>
+            <Image source={providerProfilePic} style={styles.serviceImage} />
+            <View style={styles.infoContainer}>
+              <Text style={styles.name}>{provider?.name}</Text>
+              <View style={styles.locationRow}>
+                <Icon2 name="location-on" size={20} color="#5B5B5B" />
+                <Text style={styles.address}>{fullAddress}</Text>
+              </View>
+              {provider?.mobile_number && (
+                <View style={styles.locationRow}>
+                  <Icon2 name="phone" size={20} color="#5B5B5B" />
+                  <Text style={styles.phone}>{provider?.mobile_number}</Text>
+                </View>
+              )}
+
+              <View style={styles.buttonsContainer}>
+                <TouchableOpacity
+                  style={styles.button}
+                  onPress={() => {
+                    navigation.navigate('BookService', {
+                      providerId,
+                      serviceId: provider?.service_id as number,
+                    });
+                  }}>
+                  <Icon
+                    name="calendar-clock-outline"
+                    size={24}
+                    color={'white'}
+                  />
+                  <Text style={styles.buttonText}>Book Service</Text>
+                </TouchableOpacity>
+                {/* <TouchableOpacity
                 style={[styles.button, styles.chatButton]}
                 onPress={() => {
                   // navigation.navigate('Chat');
@@ -129,75 +143,79 @@ const ServiceDetails = ({navigation, route}: ServiceDetailsScreenProps) => {
                 <Icon name="android-messages" size={24} color={'white'} />
                 <Text style={styles.buttonText}>Chat</Text>
               </TouchableOpacity> */}
+              </View>
             </View>
           </View>
-        </View>
-        <View style={styles.simpleDottedLine} />
-        <View style={styles.additionalDetails}>
-          <DetailCard
-            icon="briefcase-outline"
-            title="Experience"
-            value={
-              provider?.experience ? `${provider?.experience} years` : 'N/A'
-            }
-          />
-          <DetailCard icon="cash" title="Rate" value={rateValue} />
-          <DetailCard
-            icon="format-list-bulleted"
-            title="Service"
-            value={serviceName || 'N/A'}
-          />
-          <DetailCard
-            icon="account-group-outline"
-            title="Category"
-            value={categoryName || 'N/A'}
-          />
-          <DetailCard
-            icon="briefcase-outline"
-            title="Current Availability"
-            value={
-              provider?.business_hours_enabled === 1
-                ? 'Available'
-                : 'Not Available'
-            }
-          />
-          {provider?.specialization && (
-            <>
-              <SubHeading text="Specialization" />
-              <Text style={styles.cardValue}>
-                {provider?.specialization! || 'N/A'}
-              </Text>
-            </>
-          )}
-          {provider?.skills && (
-            <>
-              <SubHeading text="Skills" />
-              <Text style={styles.cardValue}>{provider?.skills! || 'N/A'}</Text>
-            </>
-          )}
-          {serviceImages && <SubHeading text="Service Images" />}
-          <FlatList
-            data={serviceImages}
-            renderItem={({item}) => (
-              <Image
-                source={{uri: `${IMAGE_URL}${item}`}}
-                style={styles.serviceImage}
-              />
+          <View style={styles.simpleDottedLine} />
+          <View style={styles.additionalDetails}>
+            <DetailCard
+              icon="briefcase-outline"
+              title="Experience"
+              value={
+                provider?.experience
+                  ? experience[String(provider.experience)]
+                  : 'N/A'
+              }
+            />
+            <DetailCard icon="cash" title="Rate" value={rateValue} />
+            <DetailCard
+              icon="format-list-bulleted"
+              title="Service"
+              value={serviceName || 'N/A'}
+            />
+            <DetailCard
+              icon="account-group-outline"
+              title="Category"
+              value={categoryName || 'N/A'}
+            />
+            <DetailCard
+              icon="calendar-clock"
+              title="Current Availability"
+              value={
+                provider?.business_hours_enabled === 1
+                  ? 'Available'
+                  : 'Not Available'
+              }
+            />
+            {provider?.specialization && (
+              <>
+                <SubHeading text="Specialization" />
+                <Text style={styles.cardValue}>
+                  {provider?.specialization! || 'N/A'}
+                </Text>
+              </>
             )}
-            keyExtractor={(item, index) => index.toString()}
-            horizontal={true}
-            showsHorizontalScrollIndicator={false}
-          />
+            {provider?.skills && (
+              <>
+                <SubHeading text="Skills" />
+                <Text style={styles.cardValue}>
+                  {provider?.skills! || 'N/A'}
+                </Text>
+              </>
+            )}
+            {serviceImages && <SubHeading text="Service Images" />}
+            <FlatList
+              data={serviceImages}
+              renderItem={({item}) => (
+                <Image
+                  source={{uri: `${IMAGE_URL}${item}`}}
+                  style={styles.serviceImage}
+                />
+              )}
+              keyExtractor={(item, index) => index.toString()}
+              horizontal={true}
+              showsHorizontalScrollIndicator={false}
+            />
 
-          {workingHours?.length > 0 && <SubHeading text="Working Hours" />}
-          <WorkingHours days={workingHours} />
-        </View>
-      </ScrollView>
+            {workingHours?.length > 0 && <SubHeading text="Working Hours" />}
+            <WorkingHours days={workingHours} />
+          </View>
+        </ScrollView>
+      )}
     </SafeAreaView>
   );
 };
 
-// Component for rendering detail cards
 const DetailCard: React.FC<{
   icon: string;
   title: string;
@@ -207,7 +225,6 @@ const DetailCard: React.FC<{
     <Icon name={icon} size={24} style={styles.cardIcon} />
     <View style={styles.cardTextContainer}>
       <Text style={styles.cardTitle}>{title}</Text>
-      {/* This part must support rendering `value` as a component */}
       {typeof value === 'string' ? (
         <Text style={styles.cardValue}>{value}</Text>
       ) : (
@@ -217,7 +234,6 @@ const DetailCard: React.FC<{
   </View>
 );
 
-// Component for subheadings
 const SubHeading: React.FC<{text: string}> = ({text}) => (
   <Text style={styles.subHeading}>{text}</Text>
 );
@@ -233,8 +249,8 @@ const styles = StyleSheet.create({
     padding: responsiveWidth(4),
   },
   serviceImage: {
-    width: responsiveWidth(30), // 30% of screen width
-    height: responsiveWidth(30), // Square aspect ratio
+    width: responsiveWidth(30),
+    height: responsiveWidth(30),
     marginRight: responsiveWidth(4),
     borderRadius: responsiveWidth(2),
   },
@@ -265,16 +281,11 @@ const styles = StyleSheet.create({
     borderRadius: responsiveWidth(1.5),
   },
   chatButton: {
-    backgroundColor: '#3F3F3F', // Different color for the chat button
+    backgroundColor: '#3F3F3F',
   },
   buttonText: {
     color: '#FFFFFF',
     fontSize: responsiveFontSize(1.8),
-  },
-  dottedLine: {
-    width: '90%',
-    alignSelf: 'center',
-    marginVertical: responsiveHeight(2),
   },
   simpleDottedLine: {
     height: 1,
@@ -321,15 +332,16 @@ const styles = StyleSheet.create({
     marginTop: responsiveHeight(2),
     marginBottom: responsiveHeight(1),
   },
-  listItem: {
+
+  errorText: {
+    fontSize: responsiveFontSize(2),
+    color: 'red',
+    textAlign: 'center',
+    marginTop: responsiveHeight(20),
+  },
+  locationRow: {
     flexDirection: 'row',
     alignItems: 'center',
-    marginBottom: responsiveHeight(0.5),
-  },
-  listIcon: {
-    marginRight: responsiveWidth(2),
-  },
-  listText: {
-    fontSize: responsiveFontSize(2),
+    marginVertical: responsiveHeight(0.5),
   },
 });

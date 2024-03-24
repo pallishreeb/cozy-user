@@ -1,5 +1,9 @@
 import {StyleSheet, TextInput, TouchableOpacity, View} from 'react-native';
 import React from 'react';
+import {
+  responsiveWidth,
+  responsiveHeight,
+} from 'react-native-responsive-dimensions';
 import Icon from 'react-native-vector-icons/FontAwesome';
 type UserInputParams = {
   placeholder: string;
@@ -53,13 +57,13 @@ const styles = StyleSheet.create({
     alignItems: 'center',
     borderBottomWidth: 1,
     borderBottomColor: '#84878A',
-    marginBottom: 6,
+    marginBottom: responsiveHeight(0.75),
   },
   icon: {
-    marginHorizontal: 10,
+    marginHorizontal: responsiveWidth(2.5),
   },
   input: {
     flex: 1,
-    paddingVertical: 10,
+    paddingVertical: responsiveHeight(1.25),
   },
 });

@@ -1,7 +1,12 @@
 import React from 'react';
 import {View, Text, Image, StyleSheet, TouchableOpacity} from 'react-native';
-import {responsiveFontSize as rf} from 'react-native-responsive-dimensions';
+import {
+  responsiveWidth,
+  responsiveHeight,
+  responsiveFontSize,
+} from 'react-native-responsive-dimensions';
 import Icon from 'react-native-vector-icons/MaterialCommunityIcons';
+import Icon2 from 'react-native-vector-icons/MaterialIcons';
 import {IMAGE_URL} from '../../constants';
 import {Provider} from '../../types';
 
@@ -24,14 +29,18 @@ const ServiceCard: React.FC<ServiceCardProps> = ({
       <Image source={profileImage} style={styles.image} />
       <View style={styles.details}>
         <Text style={styles.providerName}>{service.name}</Text>
-        <Text style={styles.location}>
-          {service.address},{service.city},{service.state},{service.country},
-          {service.zipcode}
-        </Text>
+        <View style={styles.locationRow}>
+          <Icon2 name="location-on" size={20} color="#5B5B5B" />
+          <Text style={styles.location}>
+            {service.address} {service.city} {service.state} {service.country}{' '}
+            {service.zipcode}
+          </Text>
+        </View>
+
         <TouchableOpacity style={styles.button} onPress={handleBookService}>
           <Icon
             name="calendar-clock-outline"
-            size={rf(2.5)}
+            size={responsiveFontSize(2.5)}
             color={'#5B5B5B'}
           />
           <Text style={styles.buttonText}>Book Service</Text>
@@ -46,43 +55,46 @@ export default ServiceCard;
 const styles = StyleSheet.create({
   card: {
     flexDirection: 'row',
-    paddingHorizontal: 10,
-    paddingVertical: 15,
-    marginVertical: 5,
-    marginHorizontal: 10,
-    borderColor: '#E3E3E3', // Border color
-    borderWidth: 1, // Border width
-    borderRadius: 10,
+    paddingHorizontal: responsiveWidth(2.5),
+    paddingVertical: responsiveHeight(2),
+    marginVertical: responsiveHeight(0.625),
+    marginHorizontal: responsiveWidth(2.5),
+    borderColor: '#E3E3E3',
+    borderWidth: 2,
+    borderRadius: responsiveWidth(2.5),
   },
   image: {
-    width: 120,
-    height: 120,
-    borderRadius: 20,
+    width: responsiveWidth(30),
+    height: responsiveHeight(15),
+    borderRadius: responsiveWidth(5),
   },
   details: {
-    marginLeft: 10,
+    marginLeft: responsiveWidth(2.5),
     flex: 1,
     justifyContent: 'space-around',
   },
   providerName: {
     fontWeight: 'bold',
     color: '#333',
-    fontSize: 18,
+    fontSize: responsiveFontSize(2.25),
+  },
+  locationRow: {
+    flexDirection: 'row',
+    alignItems: 'center',
   },
   location: {
     color: '#666',
+    marginLeft: responsiveWidth(1),
   },
-
   button: {
     flexDirection: 'row',
     alignItems: 'center',
     justifyContent: 'space-evenly',
-    gap: 10,
     backgroundColor: '#E3E3E3',
-    width: 130,
-    paddingVertical: 6,
-    paddingHorizontal: 10,
-    borderRadius: 20,
+    width: responsiveWidth(32.5),
+    paddingVertical: responsiveHeight(0.75),
+    paddingHorizontal: responsiveWidth(2.5),
+    borderRadius: responsiveWidth(5),
   },
   buttonText: {
     textAlign: 'center',
