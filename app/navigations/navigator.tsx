@@ -51,7 +51,6 @@ export default () => {
   );
   return (
     <NavigationContainer>
-      {/* Conditional stack navigator rendering based on login state */}
       {isLoggedIn ? <AppNavigator /> : <AuthNavigator />}
     </NavigationContainer>
   );

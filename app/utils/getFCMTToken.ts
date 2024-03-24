@@ -27,4 +27,3 @@ export const getNewFCMToken = async () => {
   }
   return null; // Return null if there was an error or no token
 };
-// export default getNewFCMToken;

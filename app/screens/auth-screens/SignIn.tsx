@@ -9,9 +9,8 @@ import {
   Alert,
 } from 'react-native';
 import {
-  responsiveHeight as hp,
-  responsiveWidth as wp,
-  responsiveFontSize as fp,
+  responsiveHeight as rh,
+  responsiveWidth as rw,
 } from 'react-native-responsive-dimensions';
 import {KeyboardAwareScrollView} from 'react-native-keyboard-aware-scroll-view';
 import Input from '../../components/input';
@@ -78,10 +77,10 @@ export default ({navigation}: SignInScreenProps) => {
         email,
         password,
       });
-      console.log('login response', response?.data);
+      // console.log('login response', response?.data);
       dispatch(setSignIn(response?.data));
       await AsyncStorage.setItem('@auth', JSON.stringify(response?.data));
-    } catch (error) {
+    } catch (error: any) {
       console.log('inside catch', error?.response);
       Alert.alert(
         'Error',
@@ -160,51 +159,48 @@ const styles = StyleSheet.create({
   scrollViewContainer: {
     flexGrow: 1,
     backgroundColor: '#FF3131',
-    // paddingBottom: 36,
   },
   formContainer: {
     backgroundColor: '#FFFFFF',
-    borderBottomRightRadius: 80,
-    borderBottomLeftRadius: 80,
-    paddingTop: hp(10),
-    paddingBottom: hp(4),
-    // marginBottom: 30,
-    height: hp(90),
+    borderBottomRightRadius: rw(20),
+    borderBottomLeftRadius: rw(20),
+    paddingTop: rh(10),
+    paddingBottom: rh(4),
+    height: rh(90),
   },
-
   headingText1: {
-    fontSize: 25,
-    marginBottom: 8,
-    marginHorizontal: 26,
+    fontSize: rw(6.25),
+    marginBottom: rh(1),
+    marginHorizontal: rw(6.5),
     fontWeight: 'bold',
     textTransform: 'uppercase',
     color: '#FF3131',
   },
   headingText2: {
     color: '#84868A',
-    marginBottom: 30,
-    marginHorizontal: 25,
-    fontSize: 18,
+    marginBottom: rh(4),
+    marginHorizontal: rw(6.25),
+    fontSize: rw(4.5),
     fontWeight: 'normal',
     textTransform: 'none',
   },
   fieldContainer: {
-    marginTop: 20,
-    marginHorizontal: wp(6),
+    marginTop: rh(2.5),
+    marginHorizontal: rw(6),
   },
   label: {
     color: '#5B5B5B',
-    fontSize: 14,
-    marginBottom: 5,
-    marginHorizontal: 10,
+    fontSize: rw(3.5),
+    marginBottom: rh(1),
+    marginHorizontal: rw(2.5),
   },
   errorMSg: {
     color: 'red',
-    fontSize: 14,
-    marginBottom: 8,
+    fontSize: rw(3.5),
+    marginBottom: rh(1),
   },
   forgotPasswordContainer: {
-    marginVertical: 20,
+    marginVertical: rh(2.5),
     alignItems: 'flex-end',
   },
   forgotPasswordText: {
@@ -212,14 +208,14 @@ const styles = StyleSheet.create({
     textDecorationLine: 'none',
   },
   submitButtonConatiner: {
-    marginBottom: hp(4),
-    marginTop: hp(4),
+    marginBottom: rh(4),
+    marginTop: rh(4),
   },
   footer: {
-    marginTop: 'auto', // Pushes the footer to the bottom
-    paddingTop: 20, // Adjust based on your design
-    paddingBottom: 20, // Adjust based on your design
-    paddingHorizontal: 20,
+    marginTop: 'auto',
+    paddingTop: rh(2.5),
+    paddingBottom: rh(2.5),
+    paddingHorizontal: rw(5),
     alignItems: 'center',
   },
   footerText: {

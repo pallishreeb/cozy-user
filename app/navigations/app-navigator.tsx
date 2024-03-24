@@ -40,7 +40,7 @@ const AppNavigator = () => {
         const response = await axiosPrivate.post(endpoints.SAVE_TOKEN, {
           device_token: token,
         });
-        console.log(response, 'device_token response');
+        // console.log(response, 'device_token response');
 
         if (response.status === 200) {
           await saveString(TOKEN_SENT_KEY, token);

@@ -5,14 +5,13 @@ import {
   Text,
   StyleSheet,
   StatusBar,
-  TouchableOpacity,
   Alert,
 } from 'react-native';
 
 import {
-  responsiveHeight as hp,
-  responsiveWidth as wp,
-  responsiveFontSize as fp,
+  responsiveHeight as rh,
+  responsiveWidth as rw,
+  responsiveFontSize as rf,
 } from 'react-native-responsive-dimensions';
 import {KeyboardAwareScrollView} from 'react-native-keyboard-aware-scroll-view';
 import Input from '../../components/input';
@@ -95,7 +94,7 @@ export default ({navigation, route}: ResetPasswordScreenProps) => {
           onPress: () => navigation.navigate('SignIn'),
         },
       ]);
-    } catch (error) {
+    } catch (error: any) {
       console.log('inside catch', error?.response);
       Alert.alert(
         'Information',
@@ -179,51 +178,46 @@ const styles = StyleSheet.create({
   scrollViewContainer: {
     flexGrow: 1,
     backgroundColor: '#FF3131',
-    // paddingBottom: 36,
   },
   formContainer: {
     backgroundColor: '#FFFFFF',
-    borderBottomRightRadius: 80,
-    borderBottomLeftRadius: 80,
-    paddingTop: 50,
-    // paddingBottom: 30,
-    // marginBottom: 30,
-    height: hp(90),
+    borderBottomRightRadius: rw(20),
+    borderBottomLeftRadius: rw(20),
+    paddingTop: rh(7),
+    height: rh(90),
   },
-
   headingText1: {
-    fontSize: 25,
-    marginBottom: 8,
-    marginHorizontal: 26,
+    fontSize: rf(3),
+    marginBottom: rh(1),
+    marginHorizontal: rw(7),
     fontWeight: 'bold',
     textTransform: 'uppercase',
     color: '#FF3131',
   },
   headingText2: {
     color: '#84868A',
-    // marginBottom: 20,
-    marginHorizontal: 25,
-    fontSize: 18, // Adjust for smaller text
-    fontWeight: 'normal', // Or specify the desired weight
-    textTransform: 'none', // Default, but explicitly stated for clarity
+    marginHorizontal: rw(7),
+    fontSize: rf(2.25),
+    fontWeight: 'normal',
+    textTransform: 'none',
   },
   fieldContainer: {
-    marginTop: 20,
-    marginHorizontal: wp(6),
+    marginTop: rh(2.5),
+    marginHorizontal: rw(6),
   },
   label: {
     color: '#5B5B5B',
-    fontSize: 14,
-    marginBottom: 5,
-    marginHorizontal: 10,
+    fontSize: rf(1.75),
+    marginBottom: rh(0.6),
+    marginHorizontal: rw(2.5),
   },
   errorMSg: {
     color: 'red',
-    fontSize: 14,
-    marginBottom: 8,
+    fontSize: rf(1.75),
+    marginBottom: rh(1),
   },
   forgotPasswordContainer: {
-    marginVertical: 20,
+    marginVertical: rh(2.5),
     alignItems: 'flex-end',
   },
   forgotPasswordText: {
@@ -231,14 +225,14 @@ const styles = StyleSheet.create({
     textDecorationLine: 'none',
   },
   submitButtonConatiner: {
-    marginBottom: hp(4),
-    marginTop: hp(4),
+    marginBottom: rh(4),
+    marginTop: rh(4),
   },
   footer: {
-    marginTop: 'auto', // Pushes the footer to the bottom
-    paddingTop: 20, // Adjust based on your design
-    paddingBottom: 20, // Adjust based on your design
-    paddingHorizontal: 20,
+    marginTop: 'auto',
+    paddingTop: rh(2.5),
+    paddingBottom: rh(2.5),
+    paddingHorizontal: rw(5), // Converted to a responsive width percentage
     alignItems: 'center',
   },
   footerText: {
@@ -252,11 +246,11 @@ const styles = StyleSheet.create({
   resendButtonText: {
     textDecorationLine: 'underline',
     color: '#FF3131',
-    fontSize: fp(1.9),
+    fontSize: rf(1.9), // Adjusted for a responsive font size
   },
   resendButton: {
     flexDirection: 'row',
     justifyContent: 'center',
-    marginTop: hp(2),
+    marginTop: rh(2),
   },
 });

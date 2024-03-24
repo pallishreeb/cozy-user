@@ -93,7 +93,7 @@ export default ({navigation}: SignUpScreenProps) => {
   const handleSubmit = async () => {
     if (!isFormValid) {
       // Form is invalid, display error messages
-      console.log('Form has errors. Please correct them.');
+      // console.log('Form has errors. Please correct them.');
       Alert.alert('Errors', 'Form has errors. Please correct them.');
     }
     try {
@@ -212,8 +212,8 @@ const styles = StyleSheet.create({
   },
   formContainer: {
     backgroundColor: '#FFFFFF',
-    borderBottomRightRadius: 80,
-    borderBottomLeftRadius: 80,
+    borderBottomRightRadius: rw(20),
+    borderBottomLeftRadius: rw(20),
     paddingTop: rh(3),
     paddingBottom: rh(4),
     height: rh(90),
