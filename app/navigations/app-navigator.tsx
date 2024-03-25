@@ -13,7 +13,7 @@ import EditBooking from '../screens/app-screens/EditBooking';
 import {Appointment, Provider} from '../types';
 import messaging from '@react-native-firebase/messaging';
 import {Alert, PermissionsAndroid} from 'react-native';
-import {getNewFCMToken} from '../utils/getFCMTToken';
+import {getNewFCMToken} from '../utils/getFCMToken';
 import {axiosPrivate} from '../utils/axiosConfig';
 import {saveString, loadString} from '../utils/storage';
 import {endpoints} from '../constants';

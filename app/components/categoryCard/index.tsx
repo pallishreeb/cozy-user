@@ -8,7 +8,7 @@ import React from 'react';
 
 export default ({
   label = '',
-  source = require('../../assets/house-keeper.png'),
+  source = require('../../assets/placeholder.jpg'),
   onPress = () => {},
 }) => {
   return (

@@ -28,18 +28,13 @@ export default ({navigation}: HomeScreenProps) => {
   let handleNavigation = () => {
     navigation.navigate('Notification');
   };
-  if (isLoading) {
-    return <Loader />;
-  }
-  if (error) {
-    <Text>{error.message}</Text>;
-  }
+
   const renderService = ({item}: {item: Service}) => {
     // console.log(item?.images)
     // let images = item?.images && JSON.parse(item?.images);
-    const serviceImageUri = item?.images
-      ? `${IMAGE_URL}${item?.images[0]}`
-      : 'https://via.placeholder.com/150';
+    const serviceImage = item?.images
+      ? {uri: `${IMAGE_URL}${item?.images[0]}`}
+      : require('../../assets/placeholder.jpg');
 
     return (
       <CategoryCard
@@ -47,22 +42,22 @@ export default ({navigation}: HomeScreenProps) => {
         onPress={() => {
           navigation.navigate('SearchResult', {keyword: item?.name});
         }}
-        source={{uri: serviceImageUri}}
+        source={serviceImage}
       />
     );
   };
 
   const renderTopCategory = ({item}: {item: Category}) => {
-    const categoryImageUri = item?.image
-      ? `${IMAGE_URL}/category_images/${item?.image}`
-      : 'https://via.placeholder.com/150';
+    const categoryImage = item?.image
+      ? {uri: `${IMAGE_URL}/category_images/${item?.image}`}
+      : require('../../assets/placeholder.jpg');
     return (
       <CategoryCard
         label={item.name}
         onPress={() => {
           navigation.navigate('SearchResult', {keyword: item?.name});
         }}
-        source={{uri: categoryImageUri}}
+        source={categoryImage}
       />
     );
   };
@@ -137,7 +132,9 @@ export default ({navigation}: HomeScreenProps) => {
             backgroundColor: '#FFFFFF',
           }}>
           <View style={styles.categoryHeaderContainer}>
-            <Text style={[styles.categoryTitle]}>{'Top Categories'}</Text>
+            {categories?.length > 0 && (
+              <Text style={[styles.categoryTitle]}>{'Top Categories'}</Text>
+            )}
           </View>
           <View style={styles.categoryHeaderContainer}>
             <FlatList

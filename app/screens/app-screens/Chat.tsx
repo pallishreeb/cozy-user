@@ -31,6 +31,8 @@ import {format} from 'date-fns';
 import {AppStackParamList} from '../../navigations/app-navigator';
 import {NativeStackScreenProps} from '@react-navigation/native-stack';
 import Loader from '../../components/loader';
+import {axiosPrivate} from '../../utils/axiosConfig';
+import {endpoints} from '../../constants';
 type ChatScreenProps = NativeStackScreenProps<AppStackParamList, 'Chat'>;
 interface Message extends DocumentData {
   id: string;
@@ -76,7 +78,24 @@ const Chat = ({navigation, route}: ChatScreenProps) => {
     );
     return () => unsubscribe();
   }, [chatId]);
-
+  const sendPushNotification = async (
+    sentToId: number,
+    sentByName: string,
+    sentById: number,
+  ) => {
+    try {
+      await axiosPrivate.post(endpoints.SEND_PUSH_NOTIFICATION, {
+        sentToId,
+        sentByName,
+        sentById,
+        sentByApp: 'user',
+      });
+      return true;
+    } catch (error) {
+      console.log(error, 'error in send push notification for message');
+      return false;
+    }
+  };
   const sendMessage = async () => {
     if (text.trim().length === 0 || !chatId) return;
 
@@ -91,6 +110,11 @@ const Chat = ({navigation, route}: ChatScreenProps) => {
     try {
       const docRef = collection(db, 'Chats', chatId, 'messages');
       await addDoc(docRef, userMsg);
+      await sendPushNotification(
+        provider?.id,
+        profileData?.name!,
+        profileData?.id!,
+      );
       setText('');
     } catch (error: any) {
       console.error('Error sending message: ', error);

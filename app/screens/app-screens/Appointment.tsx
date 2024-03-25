@@ -17,9 +17,7 @@ import AppointmentCard from '../../components/appointmentCard';
 import CustomHeader from '../../components/customHeader';
 import useProfileData from '../../hooks/useProfileData';
 import useAppointments from '../../hooks/useAppointments';
-import {
-  useFocusEffect,
-} from '@react-navigation/native';
+import {useFocusEffect} from '@react-navigation/native';
 
 import Loader from '../../components/loader';
 import {BottomTabParamList} from '../../navigations/bottom-navigator';
@@ -30,7 +28,7 @@ type AppointmentScreenProps = BottomTabScreenProps<
 >;
 
 const Appointment = ({navigation}: AppointmentScreenProps) => {
-  const [shorwastAppointments, setShorwastAppointments] = useState(false);
+  const [showAllAppointments, setShowAllAppointments] = useState(false);
 
   const {
     profileData,
@@ -43,13 +41,17 @@ const Appointment = ({navigation}: AppointmentScreenProps) => {
     error,
     refreshAppointments,
     cancelAppointment,
-  } = useAppointments(profileData?.id!, shorwastAppointments);
+  } = useAppointments(profileData?.id!, showAllAppointments);
   useFocusEffect(
     React.useCallback(() => {
-      if (profileData?.id) {
-        refreshAppointments();
-      }
-    }, [shorwastAppointments, profileData?.id!]),
+      const refresh = async () => {
+        if (profileData?.id) {
+          await refreshAppointments();
+        }
+      };
+
+      refresh();
+    }, [profileData?.id!, showAllAppointments]),
   );
   const getContent = () => {
     if (isLoading || profileLoading) {
@@ -73,7 +75,7 @@ const Appointment = ({navigation}: AppointmentScreenProps) => {
             style={styles.noResultsImage}
           />
           <Text style={styles.noResultsText}>
-            No {shorwastAppointments ? 'appointments' : 'recent appointments'}{' '}
+            No {showAllAppointments ? 'appointments' : 'recent appointments'}{' '}
             found
           </Text>
         </View>
@@ -112,29 +114,29 @@ const Appointment = ({navigation}: AppointmentScreenProps) => {
       <View style={styles.grayBar}></View>
       <View style={styles.toggleButtonsContainer}>
         <TouchableOpacity
-          onPress={() => setShorwastAppointments(false)}
+          onPress={() => setShowAllAppointments(false)}
           style={[
             styles.toggleButton,
-            !shorwastAppointments && styles.toggleButtonActive,
+            !showAllAppointments && styles.toggleButtonActive,
           ]}>
           <Text
             style={[
               styles.toggleButtonText,
-              !shorwastAppointments && styles.toggleActiveButtonText,
+              !showAllAppointments && styles.toggleActiveButtonText,
             ]}>
             Recent Appointments
           </Text>
         </TouchableOpacity>
         <TouchableOpacity
-          onPress={() => setShorwastAppointments(true)}
+          onPress={() => setShowAllAppointments(true)}
           style={[
             styles.toggleButton,
-            shorwastAppointments && styles.toggleButtonActive,
+            showAllAppointments && styles.toggleButtonActive,
           ]}>
           <Text
             style={[
               styles.toggleButtonText,
-              shorwastAppointments && styles.toggleActiveButtonText,
+              showAllAppointments && styles.toggleActiveButtonText,
             ]}>
             All Appointments
           </Text>

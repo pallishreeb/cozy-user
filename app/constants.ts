@@ -17,6 +17,7 @@ export const endpoints = {
   USER_PENDING_BOOkINGS: 'bookings/user/pending',
   CANCEL_BOOKING: 'bookings',
   SAVE_TOKEN: 'user/save-token',
+  SEND_PUSH_NOTIFICATION: 'send-push-notification',
 };
 export const experience: {[key: string]: string} = {
   '1': '0-1 Years',

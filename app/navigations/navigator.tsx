@@ -13,6 +13,8 @@ import {
   setSignIn,
   setSignOut,
 } from '../redux/slices/authSlice';
+import linking from '../utils/linkingConfig';
+import Loader from '../components/loader';
 export default () => {
   let isLoggedIn = useSelector(selectIsLoggedIn);
   const token = useSelector(selectToken);
@@ -50,7 +52,7 @@ export default () => {
     },
   );
   return (
-    <NavigationContainer>
+    <NavigationContainer linking={linking} fallback={<Loader />}>
       {isLoggedIn ? <AppNavigator /> : <AuthNavigator />}
     </NavigationContainer>
   );
